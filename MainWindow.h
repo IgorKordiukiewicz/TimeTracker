@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+class QLabel;
+class QHBoxLayout;
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -15,7 +18,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void updateLabel();
+
 private:
     Ui::MainWindow *ui;
+
+    QHBoxLayout* mainLayout;
+    QLabel* label;
 };
 #endif // MAINWINDOW_H
