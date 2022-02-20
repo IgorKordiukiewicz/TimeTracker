@@ -1,7 +1,6 @@
 #ifndef TIMETRACKER_H
 #define TIMETRACKER_H
 
-#include <qglobal.h>
 #include <QString>
 
 class TimeTracker

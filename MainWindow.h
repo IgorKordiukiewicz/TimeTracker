@@ -4,7 +4,8 @@
 #include <QMainWindow>
 
 class QLabel;
-class QHBoxLayout;
+class QVBoxLayout;
+class DateRangeSelector;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,7 +25,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    QHBoxLayout* mainLayout;
+    QVBoxLayout* mainLayout;
+    DateRangeSelector* dateRangeSelector;
     QLabel* label;
 };
 #endif // MAINWINDOW_H

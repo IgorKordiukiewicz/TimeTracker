@@ -22,6 +22,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
         TimeTracker.h
         TimeTracker.cpp
+        DateRangeSelector.h
+        DateRangeSelector.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

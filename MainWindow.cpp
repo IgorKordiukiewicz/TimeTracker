@@ -1,9 +1,10 @@
 #include "MainWindow.h"
 #include "./ui_mainwindow.h"
 #include <QLabel>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QTimer>
 #include "TimeTracker.h"
+#include "DateRangeSelector.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -11,9 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    dateRangeSelector = new DateRangeSelector;
+
     label = new QLabel("Placeholder");
 
-    mainLayout = new QHBoxLayout();
+    mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(dateRangeSelector);
     mainLayout->addWidget(label);
 
     QWidget* layoutWidget = new QWidget();
