@@ -12,6 +12,13 @@ class DateRangeSelector : public QWidget
 public:
     DateRangeSelector(QWidget* parent = nullptr);
 
+private slots:
+    void onTodayPresetClicked();
+    void onYesterdayPresetClicked();
+    void onThisWeekPresetClicked();
+    void onThisMonthPresetClicked();
+    void onThisYearPresetClicked();
+
 private:
     QDateEdit* fromDateEdit;
     QDateEdit* toDateEdit;
