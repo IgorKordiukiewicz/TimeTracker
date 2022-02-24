@@ -14,18 +14,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    auto* refreshButton = new QPushButton("Refresh");
-
     dateRangeSelector = new DateRangeSelector;
     chartsView = new ChartsView(&timeTracker);
-
-    label = new QLabel("Placeholder");
 
     mainLayout = new QVBoxLayout;
     mainLayout->addWidget(dateRangeSelector);
     mainLayout->addWidget(chartsView);
-    mainLayout->addWidget(refreshButton);
-    mainLayout->addWidget(label);
 
     auto* layoutWidget = new QWidget;
     layoutWidget->setLayout(mainLayout);
@@ -35,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent)
     timer->start(1000);
 
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeTracker()));
-    connect(refreshButton, SIGNAL(clicked()), this, SLOT(printData()));
     connect(dateRangeSelector, SIGNAL(dateChanged(QDate,QDate)), this, SLOT(onDateRangeChanged(QDate,QDate)));
 
     timeTracker.loadData();
@@ -49,7 +42,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateTimeTracker()
 {
-    label->setText(TimeTracker::getCurrentApplicationName());
     timeTracker.update();
 }
 

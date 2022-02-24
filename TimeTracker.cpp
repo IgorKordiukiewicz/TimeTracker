@@ -57,6 +57,12 @@ void TimeTracker::saveData()
     QDataStream stream(&file);
     stream.setVersion(QDataStream::Qt_6_2);
 
+    appData.clear();
+    appData.insert("App 1", QVector<DateTimeRange>({DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(12, 20)), QDateTime(QDate(2022, 2, 23), QTime(12, 30)))
+                                                    , DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(23, 55)), QDateTime(QDate(2022, 2, 24), QTime(0, 5)))
+                                                    , DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 30)), QDateTime(QDate(2022, 2, 24), QTime(14, 35)))}));
+    appData.insert("App 2", QVector<DateTimeRange>({DateTimeRange(QDateTime(QDate(2022, 2, 16), QTime(14, 42)), QDateTime(QDate(2022, 2, 16), QTime(14, 47))),
+                                                       DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 42)), QDateTime(QDate(2022, 2, 24), QTime(14, 47)))}));
     stream << appData;
 
     file.flush();
@@ -85,25 +91,27 @@ void TimeTracker::loadData()
 TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const QDate &endDate) const
 {
     AppData data;
-
-    const auto keys = appData.keys();
-    for(const auto& key : keys) {
-        auto it = data.insert(key, {});
-        for(auto dateRange : appData.value(key)) {
+    auto it = appData.constBegin();
+    while(it != appData.constEnd()) {
+        auto dateRanges = data.insert(it.key(), {});
+        for(auto dateRange : appData.value(it.key())) {
             const QDate dateRangeBeginDate = dateRange.first.date();
             const QDate dateRangeEndDate = dateRange.second.date();
             if(dateRangeBeginDate >= beginDate && dateRangeEndDate <= endDate) {
-                it->push_back(std::move(dateRange));
+                dateRanges->push_back(std::move(dateRange));
             }
             else if(dateRangeBeginDate < beginDate && dateRangeEndDate >= beginDate) {
                 dateRange.first.setDate(beginDate);
-                it->push_back(std::move(dateRange));
+                dateRange.first.setTime(QTime());
+                dateRanges->push_back(std::move(dateRange));
             }
             else if(dateRangeEndDate > endDate && dateRangeBeginDate <= endDate) {
-                dateRange.second.setDate(endDate);
-                it->push_back(std::move(dateRange));
+                dateRange.second.setDate(endDate.addDays(1));
+                dateRange.second.setTime(QTime());
+                dateRanges->push_back(std::move(dateRange));
             }
         }
+        ++it;
     }
 
     return data;

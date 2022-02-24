@@ -2,7 +2,7 @@
 #define CHARTSVIEW_H
 
 #include <QWidget>
-#include <QDate>
+#include <QHash>
 #include "TimeTracker.h"
 
 class QChartView;
@@ -17,6 +17,9 @@ public:
 
     void setDateRange(const QDate& beginDate, const QDate& endDate);
 
+private slots:
+    void onGroupByComboBoxTextChanged(const QString& text);
+
 private:
     void updateChart();
 
@@ -30,8 +33,18 @@ private:
         Year
     } groupBy{ GroupBy::None };
 
+    QHash<QString, GroupBy> groupByNames{
+        {"None", GroupBy::None},
+        {"Day", GroupBy::Day},
+        {"Week", GroupBy::Week},
+        {"Month", GroupBy::Month},
+        {"Year", GroupBy::Year},
+    };
+
     TimeTracker* timeTracker;
     TimeTracker::AppData appData;
+    QDate beginDate;
+    QDate endDate;
 
     QChartView* chartView;
     QChart* chart;
