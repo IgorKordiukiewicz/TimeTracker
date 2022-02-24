@@ -1,11 +1,86 @@
 #include "TimeTracker.h"
 #include <array>
 #include <memory>
+#include <QFile>
 
 #if defined(Q_OS_WINDOWS)
 #include <windows.h>
 #include <Psapi.h>
 #endif
+
+TimeTracker::TimeTracker()
+{
+    currentAppStartTime = QDateTime::currentDateTime();
+}
+
+TimeTracker::~TimeTracker()
+{
+    update();
+    saveData();
+}
+
+void TimeTracker::update()
+{
+    const QString appName = TimeTracker::getCurrentApplicationName();
+    if (appName == currentAppName) {
+        return;
+    }
+
+    const QDateTime currentDateTime = QDateTime::currentDateTime();
+
+    if (currentAppName.isEmpty()) {
+        currentAppName = appName;
+        currentAppStartTime = currentDateTime;
+        return;
+    }
+
+    if (auto it = appData.find(currentAppName); it != appData.end()) {
+        it.value().push_back(DateTimeRange(currentAppStartTime, currentDateTime));
+    }
+    else {
+        appData.insert(currentAppName, QVector<DateTimeRange>({DateTimeRange(currentAppStartTime, currentDateTime)}));
+    }
+
+    currentAppName = appName;
+    currentAppStartTime = currentDateTime;
+}
+
+void TimeTracker::saveData()
+{
+    const QString fileName = "data.txt";
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_6_2);
+
+    stream << appData;
+
+    file.flush();
+    file.close();
+}
+
+void TimeTracker::loadData()
+{
+    const QString fileName = "data.txt";
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_6_2);
+
+    stream >> appData;
+
+    file.close();
+
+    print();
+}
 
 QString TimeTracker::getCurrentApplicationName()
 {
@@ -42,4 +117,14 @@ QString TimeTracker::getCurrentApplicationName()
     }
 
     return appName;
+}
+
+void TimeTracker::print()
+{
+    for(auto key : appData.keys()) {
+        qDebug() << key << '\n';
+        for(auto& V : appData.value(key)){
+            qDebug() << V.first << " " << V.second << '\n';
+        }
+    }
 }

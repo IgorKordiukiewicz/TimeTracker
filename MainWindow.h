@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "TimeTracker.h"
 
 class QLabel;
 class QVBoxLayout;
@@ -20,9 +21,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void updateLabel();
+    void updateTimeTracker();
+    void printData();
 
 private:
+    TimeTracker timeTracker;
+
     Ui::MainWindow *ui;
 
     QVBoxLayout* mainLayout;

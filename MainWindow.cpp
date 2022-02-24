@@ -5,6 +5,7 @@
 #include <QTimer>
 #include "TimeTracker.h"
 #include "DateRangeSelector.h"
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,22 +13,28 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    auto* refreshButton = new QPushButton("Refresh");
+
     dateRangeSelector = new DateRangeSelector;
 
     label = new QLabel("Placeholder");
 
     mainLayout = new QVBoxLayout();
     mainLayout->addWidget(dateRangeSelector);
+    mainLayout->addWidget(refreshButton);
     mainLayout->addWidget(label);
 
-    QWidget* layoutWidget = new QWidget();
+    auto* layoutWidget = new QWidget();
     layoutWidget->setLayout(mainLayout);
     setCentralWidget(layoutWidget);
 
-    QTimer* timer = new QTimer(this);
+    auto* timer = new QTimer(this);
     timer->start(1000);
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateLabel()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeTracker()));
+    connect(refreshButton, SIGNAL(clicked()), this, SLOT(printData()));
+
+    timeTracker.loadData();
 }
 
 MainWindow::~MainWindow()
@@ -35,8 +42,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::updateLabel()
+void MainWindow::updateTimeTracker()
 {
     label->setText(TimeTracker::getCurrentApplicationName());
+    timeTracker.update();
+}
+
+void MainWindow::printData()
+{
+    timeTracker.print();
 }
 
