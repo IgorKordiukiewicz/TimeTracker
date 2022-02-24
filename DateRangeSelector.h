@@ -13,6 +13,9 @@ class DateRangeSelector : public QWidget
 public:
     DateRangeSelector(QWidget* parent = nullptr);
 
+    QDate getBeginDate() const;
+    QDate getEndDate() const;
+
 signals:
     void dateChanged(QDate beginDate, QDate endDate);
 
@@ -24,6 +27,9 @@ private slots:
     void onThisWeekPresetClicked();
     void onThisMonthPresetClicked();
     void onThisYearPresetClicked();
+
+private:
+    void handlePresetClicked(const QDate& beginDate, const QDate& endDate);
 
 private:
     QDateEdit* beginDateEdit;

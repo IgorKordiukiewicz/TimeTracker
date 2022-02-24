@@ -36,9 +36,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeTracker()));
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(printData()));
-    connect(dateRangeSelector, SIGNAL(dateChanged(QDate, QDate)), this, SLOT(onDateRangeChanged(QDate, QDate)));
+    connect(dateRangeSelector, SIGNAL(dateChanged(QDate,QDate)), this, SLOT(onDateRangeChanged(QDate,QDate)));
 
     timeTracker.loadData();
+    chartsView->setDateRange(dateRangeSelector->getBeginDate(), dateRangeSelector->getEndDate());
 }
 
 MainWindow::~MainWindow()
