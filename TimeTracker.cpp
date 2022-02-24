@@ -82,6 +82,33 @@ void TimeTracker::loadData()
     print();
 }
 
+TimeTracker::AppData TimeTracker::getDataInRange(const QDate &fromDate, const QDate &toDate) const
+{
+    AppData data;
+
+    const auto keys = appData.keys();
+    for(const auto& key : keys) {
+        auto it = data.insert(key, {});
+        for(auto dateRange : appData.value(key)) {
+            const QDate dateRangeFromDate = dateRange.first.date();
+            const QDate dateRangeToDate = dateRange.second.date();
+            if(dateRangeFromDate >= fromDate && dateRangeToDate <= toDate) {
+                it->push_back(std::move(dateRange));
+            }
+            else if(dateRangeFromDate < fromDate && dateRangeToDate >= fromDate) {
+                dateRange.first.setDate(fromDate);
+                it->push_back(std::move(dateRange));
+            }
+            else if(dateRangeToDate > toDate && dateRangeFromDate <= toDate) {
+                dateRange.second.setDate(toDate);
+                it->push_back(std::move(dateRange));
+            }
+        }
+    }
+
+    return data;
+}
+
 QString TimeTracker::getCurrentApplicationName()
 {
     QString appName = "Invalid";

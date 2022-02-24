@@ -24,6 +24,8 @@ set(PROJECT_SOURCES
         TimeTracker.cpp
         DateRangeSelector.h
         DateRangeSelector.cpp
+        ChartsView.h
+        ChartsView.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

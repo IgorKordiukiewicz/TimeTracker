@@ -7,6 +7,7 @@
 class QLabel;
 class QVBoxLayout;
 class DateRangeSelector;
+class ChartsView;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +23,7 @@ public:
 
 private slots:
     void updateTimeTracker();
+    void onDateRangeChanged(QDate fromDate, QDate toDate);
     void printData();
 
 private:
@@ -31,6 +33,7 @@ private:
 
     QVBoxLayout* mainLayout;
     DateRangeSelector* dateRangeSelector;
+    ChartsView* chartsView;
     QLabel* label;
 };
 #endif // MAINWINDOW_H

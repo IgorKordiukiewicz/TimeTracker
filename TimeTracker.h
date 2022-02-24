@@ -23,6 +23,8 @@ public:
     void saveData();
     void loadData();
 
+    AppData getDataInRange(const QDate& fromDate, const QDate& toDate) const;
+
     static QString getCurrentApplicationName();
 
     // temporary

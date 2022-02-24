@@ -66,7 +66,9 @@ void DateRangeSelector::onFromDateChanged(QDate newDate)
         return;
     }
 
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    if(!dateChangedUsingPreset) {
+        emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    }
 }
 
 void DateRangeSelector::onToDateChanged(QDate newDate)
@@ -77,7 +79,9 @@ void DateRangeSelector::onToDateChanged(QDate newDate)
         return;
     }
 
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    if(!dateChangedUsingPreset) {
+        emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    }
 }
 
 void DateRangeSelector::onTodayPresetClicked()
@@ -86,6 +90,7 @@ void DateRangeSelector::onTodayPresetClicked()
     fromDateEdit->setDate(QDate::currentDate());
     toDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
+    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
 }
 
 void DateRangeSelector::onYesterdayPresetClicked()
@@ -95,6 +100,7 @@ void DateRangeSelector::onYesterdayPresetClicked()
     fromDateEdit->setDate(yesterdayDate);
     toDateEdit->setDate(yesterdayDate);
     dateChangedUsingPreset = false;
+    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
 }
 
 void DateRangeSelector::onThisWeekPresetClicked()
@@ -108,6 +114,7 @@ void DateRangeSelector::onThisWeekPresetClicked()
     fromDateEdit->setDate(weekStartDate);
     toDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
+    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
 }
 
 void DateRangeSelector::onThisMonthPresetClicked()
@@ -121,6 +128,7 @@ void DateRangeSelector::onThisMonthPresetClicked()
     fromDateEdit->setDate(monthStartDate);
     toDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
+    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
 }
 
 void DateRangeSelector::onThisYearPresetClicked()
@@ -134,4 +142,5 @@ void DateRangeSelector::onThisYearPresetClicked()
     fromDateEdit->setDate(yearStartDate);
     toDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
+    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
 }

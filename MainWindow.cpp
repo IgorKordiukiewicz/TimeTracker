@@ -5,6 +5,7 @@
 #include <QTimer>
 #include "TimeTracker.h"
 #include "DateRangeSelector.h"
+#include "ChartsView.h"
 #include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -16,15 +17,17 @@ MainWindow::MainWindow(QWidget *parent)
     auto* refreshButton = new QPushButton("Refresh");
 
     dateRangeSelector = new DateRangeSelector;
+    chartsView = new ChartsView(&timeTracker);
 
     label = new QLabel("Placeholder");
 
-    mainLayout = new QVBoxLayout();
+    mainLayout = new QVBoxLayout;
     mainLayout->addWidget(dateRangeSelector);
+    mainLayout->addWidget(chartsView);
     mainLayout->addWidget(refreshButton);
     mainLayout->addWidget(label);
 
-    auto* layoutWidget = new QWidget();
+    auto* layoutWidget = new QWidget;
     layoutWidget->setLayout(mainLayout);
     setCentralWidget(layoutWidget);
 
@@ -33,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeTracker()));
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(printData()));
+    connect(dateRangeSelector, SIGNAL(dateChanged(QDate, QDate)), this, SLOT(onDateRangeChanged(QDate, QDate)));
 
     timeTracker.loadData();
 }
@@ -46,6 +50,11 @@ void MainWindow::updateTimeTracker()
 {
     label->setText(TimeTracker::getCurrentApplicationName());
     timeTracker.update();
+}
+
+void MainWindow::onDateRangeChanged(QDate fromDate, QDate toDate)
+{
+    chartsView->setDateRange(fromDate, toDate);
 }
 
 void MainWindow::printData()
