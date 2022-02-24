@@ -23,7 +23,7 @@ public:
 
 private slots:
     void updateTimeTracker();
-    void onDateRangeChanged(QDate fromDate, QDate toDate);
+    void onDateRangeChanged(QDate beginDate, QDate endDate);
     void printData();
 
 private:

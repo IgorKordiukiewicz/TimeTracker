@@ -20,9 +20,9 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     setLayout(mainLayout);
 }
 
-void ChartsView::setDateRange(const QDate& fromDate, const QDate& toDate)
+void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)
 {
-    appData = timeTracker->getDataInRange(fromDate, toDate);
+    appData = timeTracker->getDataInRange(beginDate, endDate);
     updateChart();
 }
 

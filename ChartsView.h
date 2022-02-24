@@ -15,7 +15,7 @@ class ChartsView : public QWidget
 public:
     ChartsView(TimeTracker* timeTracker, QWidget* parent = nullptr);
 
-    void setDateRange(const QDate& fromDate, const QDate& toDate);
+    void setDateRange(const QDate& beginDate, const QDate& endDate);
 
 private:
     void updateChart();

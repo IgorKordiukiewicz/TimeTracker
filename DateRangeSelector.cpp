@@ -9,17 +9,17 @@
 DateRangeSelector::DateRangeSelector(QWidget* parent)
     : QWidget(parent)
 {
-    auto* fromLabel = new QLabel("From:");
-    fromLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    auto* beginDateLabel = new QLabel("From:");
+    beginDateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    fromDateEdit = new QDateEdit(QDate::currentDate());
-    fromDateEdit->setMaximumDate(QDate::currentDate());
+    beginDateEdit = new QDateEdit(QDate::currentDate());
+    beginDateEdit->setMaximumDate(QDate::currentDate());
 
-    auto* toLabel = new QLabel("To:");
-    toLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    auto* endDateLabel = new QLabel("To:");
+    endDateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    toDateEdit = new QDateEdit(QDate::currentDate());
-    toDateEdit->setMaximumDate(QDate::currentDate());
+    endDateEdit = new QDateEdit(QDate::currentDate());
+    endDateEdit->setMaximumDate(QDate::currentDate());
 
     auto* todayPresetButton = new QPushButton("Today");
     auto* yesterdayPresetButton = new QPushButton("Yesterday");
@@ -29,10 +29,10 @@ DateRangeSelector::DateRangeSelector(QWidget* parent)
 
     // Initialize date edits layout
     auto* dateEditsLayout = new QHBoxLayout;
-    dateEditsLayout->addWidget(fromLabel);
-    dateEditsLayout->addWidget(fromDateEdit);
-    dateEditsLayout->addWidget(toLabel);
-    dateEditsLayout->addWidget(toDateEdit);
+    dateEditsLayout->addWidget(beginDateLabel);
+    dateEditsLayout->addWidget(beginDateEdit);
+    dateEditsLayout->addWidget(endDateLabel);
+    dateEditsLayout->addWidget(endDateEdit);
 
     // Initialie date presets layout
     auto* datePresetsLayout = new QHBoxLayout;
@@ -49,8 +49,8 @@ DateRangeSelector::DateRangeSelector(QWidget* parent)
     mainLayout->addLayout(datePresetsLayout);
     setLayout(mainLayout);
 
-    connect(fromDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(onFromDateChanged(QDate)));
-    connect(toDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(onToDateChanged(QDate)));
+    connect(beginDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(onBeginDateChanged(QDate)));
+    connect(endDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(onEndDateChanged(QDate)));
     connect(todayPresetButton, SIGNAL(clicked()), this, SLOT(onTodayPresetClicked()));
     connect(yesterdayPresetButton, SIGNAL(clicked()), this, SLOT(onYesterdayPresetClicked()));
     connect(thisWeekPresetButton, SIGNAL(clicked()), this, SLOT(onThisWeekPresetClicked()));
@@ -58,49 +58,49 @@ DateRangeSelector::DateRangeSelector(QWidget* parent)
     connect(thisYearPresetButton, SIGNAL(clicked()), this, SLOT(onThisYearPresetClicked()));
 }
 
-void DateRangeSelector::onFromDateChanged(QDate newDate)
+void DateRangeSelector::onBeginDateChanged(QDate newDate)
 {
     // 'from' date can't be larger than the 'to' date
-    if (fromDateEdit->date() > toDateEdit->date() && !dateChangedUsingPreset) {
-        fromDateEdit->setDate(toDateEdit->date());
+    if (beginDateEdit->date() > endDateEdit->date() && !dateChangedUsingPreset) {
+        beginDateEdit->setDate(endDateEdit->date());
         return;
     }
 
     if(!dateChangedUsingPreset) {
-        emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+        emit dateChanged(beginDateEdit->date(), endDateEdit->date());
     }
 }
 
-void DateRangeSelector::onToDateChanged(QDate newDate)
+void DateRangeSelector::onEndDateChanged(QDate newDate)
 {
     // 'to' date can't be smaller than the 'from' date
-    if (toDateEdit->date() < fromDateEdit->date() && !dateChangedUsingPreset) {
-        toDateEdit->setDate(fromDateEdit->date());
+    if (endDateEdit->date() < beginDateEdit->date() && !dateChangedUsingPreset) {
+        endDateEdit->setDate(beginDateEdit->date());
         return;
     }
 
     if(!dateChangedUsingPreset) {
-        emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+        emit dateChanged(beginDateEdit->date(), endDateEdit->date());
     }
 }
 
 void DateRangeSelector::onTodayPresetClicked()
 {
     dateChangedUsingPreset = true;
-    fromDateEdit->setDate(QDate::currentDate());
-    toDateEdit->setDate(QDate::currentDate());
+    beginDateEdit->setDate(QDate::currentDate());
+    endDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    emit dateChanged(beginDateEdit->date(), endDateEdit->date());
 }
 
 void DateRangeSelector::onYesterdayPresetClicked()
 {
     const QDate yesterdayDate = QDate::currentDate().addDays(-1);
     dateChangedUsingPreset = true;
-    fromDateEdit->setDate(yesterdayDate);
-    toDateEdit->setDate(yesterdayDate);
+    beginDateEdit->setDate(yesterdayDate);
+    endDateEdit->setDate(yesterdayDate);
     dateChangedUsingPreset = false;
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    emit dateChanged(beginDateEdit->date(), endDateEdit->date());
 }
 
 void DateRangeSelector::onThisWeekPresetClicked()
@@ -111,10 +111,10 @@ void DateRangeSelector::onThisWeekPresetClicked()
         return date;
     }();
     dateChangedUsingPreset = true;
-    fromDateEdit->setDate(weekStartDate);
-    toDateEdit->setDate(QDate::currentDate());
+    beginDateEdit->setDate(weekStartDate);
+    endDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    emit dateChanged(beginDateEdit->date(), endDateEdit->date());
 }
 
 void DateRangeSelector::onThisMonthPresetClicked()
@@ -125,10 +125,10 @@ void DateRangeSelector::onThisMonthPresetClicked()
         return date;
     }();
     dateChangedUsingPreset = true;
-    fromDateEdit->setDate(monthStartDate);
-    toDateEdit->setDate(QDate::currentDate());
+    beginDateEdit->setDate(monthStartDate);
+    endDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    emit dateChanged(beginDateEdit->date(), endDateEdit->date());
 }
 
 void DateRangeSelector::onThisYearPresetClicked()
@@ -139,8 +139,8 @@ void DateRangeSelector::onThisYearPresetClicked()
         return date;
     }();
     dateChangedUsingPreset = true;
-    fromDateEdit->setDate(yearStartDate);
-    toDateEdit->setDate(QDate::currentDate());
+    beginDateEdit->setDate(yearStartDate);
+    endDateEdit->setDate(QDate::currentDate());
     dateChangedUsingPreset = false;
-    emit dateChanged(fromDateEdit->date(), toDateEdit->date());
+    emit dateChanged(beginDateEdit->date(), endDateEdit->date());
 }

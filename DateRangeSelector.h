@@ -14,11 +14,11 @@ public:
     DateRangeSelector(QWidget* parent = nullptr);
 
 signals:
-    void dateChanged(QDate fromDate, QDate toDate);
+    void dateChanged(QDate beginDate, QDate endDate);
 
 private slots:
-    void onFromDateChanged(QDate newDate);
-    void onToDateChanged(QDate newDate);
+    void onBeginDateChanged(QDate newDate);
+    void onEndDateChanged(QDate newDate);
     void onTodayPresetClicked();
     void onYesterdayPresetClicked();
     void onThisWeekPresetClicked();
@@ -26,8 +26,8 @@ private slots:
     void onThisYearPresetClicked();
 
 private:
-    QDateEdit* fromDateEdit;
-    QDateEdit* toDateEdit;
+    QDateEdit* beginDateEdit;
+    QDateEdit* endDateEdit;
     bool dateChangedUsingPreset{false};
 };
 

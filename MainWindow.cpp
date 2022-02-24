@@ -52,9 +52,9 @@ void MainWindow::updateTimeTracker()
     timeTracker.update();
 }
 
-void MainWindow::onDateRangeChanged(QDate fromDate, QDate toDate)
+void MainWindow::onDateRangeChanged(QDate beginDate, QDate endDate)
 {
-    chartsView->setDateRange(fromDate, toDate);
+    chartsView->setDateRange(beginDate, endDate);
 }
 
 void MainWindow::printData()

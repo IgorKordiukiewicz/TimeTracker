@@ -82,7 +82,7 @@ void TimeTracker::loadData()
     print();
 }
 
-TimeTracker::AppData TimeTracker::getDataInRange(const QDate &fromDate, const QDate &toDate) const
+TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const QDate &endDate) const
 {
     AppData data;
 
@@ -90,17 +90,17 @@ TimeTracker::AppData TimeTracker::getDataInRange(const QDate &fromDate, const QD
     for(const auto& key : keys) {
         auto it = data.insert(key, {});
         for(auto dateRange : appData.value(key)) {
-            const QDate dateRangeFromDate = dateRange.first.date();
-            const QDate dateRangeToDate = dateRange.second.date();
-            if(dateRangeFromDate >= fromDate && dateRangeToDate <= toDate) {
+            const QDate dateRangeBeginDate = dateRange.first.date();
+            const QDate dateRangeEndDate = dateRange.second.date();
+            if(dateRangeBeginDate >= beginDate && dateRangeEndDate <= endDate) {
                 it->push_back(std::move(dateRange));
             }
-            else if(dateRangeFromDate < fromDate && dateRangeToDate >= fromDate) {
-                dateRange.first.setDate(fromDate);
+            else if(dateRangeBeginDate < beginDate && dateRangeEndDate >= beginDate) {
+                dateRange.first.setDate(beginDate);
                 it->push_back(std::move(dateRange));
             }
-            else if(dateRangeToDate > toDate && dateRangeFromDate <= toDate) {
-                dateRange.second.setDate(toDate);
+            else if(dateRangeEndDate > endDate && dateRangeBeginDate <= endDate) {
+                dateRange.second.setDate(endDate);
                 it->push_back(std::move(dateRange));
             }
         }
