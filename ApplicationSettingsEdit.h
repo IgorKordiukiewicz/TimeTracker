@@ -2,7 +2,7 @@
 #define APPLICATIONSETTINGSEDIT_H
 
 #include <QWidget>
-#include "ApplicationSettings.h"
+#include "Settings.h"
 
 class QLineEdit;
 class QPushButton;
@@ -13,9 +13,6 @@ class ApplicationSettingsEdit : public QWidget
 
 public:
     ApplicationSettingsEdit(const QString& appName, ApplicationSettings& appSettings, QWidget* parent = nullptr);
-
-signals:
-    void appDisplayNameChanged(const QString& appName, const QString& newAppDisplayName);
 
 private slots:
     void onAppDisplayNameEditChanged(const QString& text);

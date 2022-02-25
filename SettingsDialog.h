@@ -2,17 +2,17 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
-#include "ApplicationSettings.h"
+#include "Settings.h"
 
 class CategoriesTab;
 class ApplicationsTab;
 
 class SettingsDialog : public QDialog
 {
-    //Q_OBJECT
+    Q_OBJECT
 
 public:
-    SettingsDialog(ApplicationsSettings& appsSettings, QWidget* parent = nullptr);
+    SettingsDialog(ApplicationsSettings& appsSettings, CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
 
 private:
     CategoriesTab* categoriesTab;

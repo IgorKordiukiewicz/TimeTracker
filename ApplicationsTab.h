@@ -2,11 +2,11 @@
 #define APPLICATIONSTAB_H
 
 #include <QWidget>
-#include "ApplicationSettings.h"
+#include "Settings.h"
 
 class ApplicationsTab : public QWidget
 {
-    //Q_OBJECT
+    Q_OBJECT
 
 public:
     ApplicationsTab(ApplicationsSettings& appsSettings, QWidget* parent = nullptr);

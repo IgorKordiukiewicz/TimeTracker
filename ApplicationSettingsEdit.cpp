@@ -12,6 +12,7 @@ ApplicationSettingsEdit::ApplicationSettingsEdit(const QString& appName, Applica
     , appSettings(appSettings)
 {
     auto* appNameLabel = new QLabel(appName);
+    appNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     appDisplayNameEdit = new QLineEdit;
     appDisplayNameEdit->setText(appName);

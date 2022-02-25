@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "TimeTracker.h"
-#include "ApplicationSettings.h"
+#include "Settings.h"
 
 class QChartView;
 class QChart;
@@ -16,8 +16,8 @@ public:
     ChartsView(TimeTracker* timeTracker, QWidget* parent = nullptr);
     ~ChartsView();
 
-    void saveAppsSettings();
-    void loadAppsSettings();
+    void saveSettings();
+    void loadSettings();
     void setDateRange(const QDate& beginDate, const QDate& endDate);
 
 private slots:
@@ -27,6 +27,10 @@ private slots:
     void onNewAppTracked(const QString& appName);
 
 private:
+    void saveAppsSettings();
+    void saveCategoriesSettings();
+    void loadAppsSettings();
+    void loadCategoriesSettings();
     void updateData();
     void updateChart();
 
@@ -56,6 +60,7 @@ private:
     };
 
     ApplicationsSettings appsSettings;
+    CategoriesSettings categoriesSettings;
 
     TimeTracker* timeTracker;
     TimeTracker::AppData appData;

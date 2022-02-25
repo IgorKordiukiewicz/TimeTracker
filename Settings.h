@@ -1,5 +1,5 @@
-#ifndef APPLICATIONSETTINGS_H
-#define APPLICATIONSETTINGS_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 #include <QString>
 #include <QDataStream>
@@ -14,7 +14,16 @@ struct ApplicationSettings
 };
 using ApplicationsSettings = QMap<QString, ApplicationSettings>;
 
+struct CategorySettings
+{
+    QColor chartColor;
+};
+using CategoriesSettings = QMap<QString, CategorySettings>;
+
 QDataStream& operator<<(QDataStream& stream, const ApplicationSettings& appSettings);
 QDataStream& operator>>(QDataStream& stream, ApplicationSettings& appSettings);
 
-#endif // APPLICATIONSETTINGS_H
+QDataStream& operator<<(QDataStream& stream, const CategorySettings& categorySettings);
+QDataStream& operator>>(QDataStream& stream, CategorySettings& categorySettings);
+
+#endif // SETTINGS_H

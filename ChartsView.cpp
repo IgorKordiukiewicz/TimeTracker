@@ -17,6 +17,7 @@
 #include <QDataStream>
 #include <QFile>
 #include <random>
+#include "Utils.h"
 
 ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     : QWidget(parent)
@@ -64,7 +65,19 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
 
 ChartsView::~ChartsView()
 {
+    saveSettings();
+}
+
+void ChartsView::saveSettings()
+{
+    saveCategoriesSettings();
     saveAppsSettings();
+}
+
+void ChartsView::loadSettings()
+{
+    loadCategoriesSettings();
+    loadAppsSettings();
 }
 
 void ChartsView::saveAppsSettings()
@@ -85,6 +98,24 @@ void ChartsView::saveAppsSettings()
     appsSettingsTEMP.insert("App 1", ApplicationSettings{"App 1", "", QColor(200, 0, 0)});
     appsSettingsTEMP.insert("App 2", ApplicationSettings{"App 2", "", QColor(0, 200, 0)});
     stream << appsSettingsTEMP;
+    file.flush();
+    file.close();
+}
+
+void ChartsView::saveCategoriesSettings()
+{
+    const QString fileName = "categoriesSettings";
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "Failed to open file 'categoriesSettings'";
+        return;
+    }
+
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_6_2);
+
+    stream << categoriesSettings;
     file.flush();
     file.close();
 }
@@ -111,6 +142,23 @@ void ChartsView::loadAppsSettings()
             onNewAppTracked(appName);
         }
     }
+}
+
+void ChartsView::loadCategoriesSettings()
+{
+    const QString fileName = "categoriesSettings";
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Failed to open file 'categoriesSettings'";
+        return;
+    }
+
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_6_2);
+
+    stream >> categoriesSettings;
+    file.close();
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)
@@ -158,7 +206,7 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
 
 void ChartsView::onSettingsButtonClicked()
 {
-    SettingsDialog settingsDialog(appsSettings);
+    SettingsDialog settingsDialog(appsSettings, categoriesSettings);
     if(settingsDialog.exec()) {
         updateChart();
     }
@@ -169,17 +217,7 @@ void ChartsView::onNewAppTracked(const QString& appName)
     ApplicationSettings appSettings;
     appSettings.displayName = appName;
     appSettings.categoryName = "";
-    appSettings.chartColor = [](){
-        std::random_device randomDevice;
-        std::mt19937 engine(randomDevice());
-        std::uniform_real_distribution<double> hueDist(0.0, 1.0);
-        const double hue = hueDist(engine);
-        std::uniform_real_distribution<double> saturationDist(0.5, 0.9);
-        const double saturation = saturationDist(engine);
-        std::uniform_real_distribution<double> lightnessDist(0.5, 0.6);
-        const double lightness = lightnessDist(engine);
-        return QColor::fromHslF(hue, saturation, lightness);
-    }();
+    appSettings.chartColor = Utils::generateRandomColorForChart();
     appsSettings.insert(appName, std::move(appSettings));
 }
 

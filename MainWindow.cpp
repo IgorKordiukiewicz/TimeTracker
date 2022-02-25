@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(dateRangeSelector, &DateRangeSelector::dateChanged, this, &MainWindow::onDateRangeChanged);
 
     timeTracker.loadData();
-    chartsView->loadAppsSettings();
+    chartsView->loadSettings();
     chartsView->setDateRange(dateRangeSelector->getBeginDate(), dateRangeSelector->getEndDate());
 }
 
