@@ -53,9 +53,9 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     mainLayout->addWidget(chartView);
     setLayout(mainLayout);
 
-    connect(groupByComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onGroupByComboBoxTextChanged(QString)));
-    connect(chartDataTypeComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onChartDataTypeComboBoxTextChanged(QString)));
-    connect(settingsButton, SIGNAL(clicked()), this, SLOT(onSettingsButtonClicked()));
+    connect(groupByComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onGroupByComboBoxTextChanged);
+    connect(chartDataTypeComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onChartDataTypeComboBoxTextChanged);
+    connect(settingsButton, &QPushButton::clicked, this, &ChartsView::onSettingsButtonClicked);
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)

@@ -49,13 +49,13 @@ DateRangeSelector::DateRangeSelector(QWidget* parent)
     mainLayout->addLayout(datePresetsLayout);
     setLayout(mainLayout);
 
-    connect(beginDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(onBeginDateChanged(QDate)));
-    connect(endDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(onEndDateChanged(QDate)));
-    connect(todayPresetButton, SIGNAL(clicked()), this, SLOT(onTodayPresetClicked()));
-    connect(yesterdayPresetButton, SIGNAL(clicked()), this, SLOT(onYesterdayPresetClicked()));
-    connect(thisWeekPresetButton, SIGNAL(clicked()), this, SLOT(onThisWeekPresetClicked()));
-    connect(thisMonthPresetButton, SIGNAL(clicked()), this, SLOT(onThisMonthPresetClicked()));
-    connect(thisYearPresetButton, SIGNAL(clicked()), this, SLOT(onThisYearPresetClicked()));
+    connect(beginDateEdit, &QDateEdit::dateChanged, this, &DateRangeSelector::onBeginDateChanged);
+    connect(endDateEdit, &QDateEdit::dateChanged, this, &DateRangeSelector::onEndDateChanged);
+    connect(todayPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onTodayPresetClicked);
+    connect(yesterdayPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onYesterdayPresetClicked);
+    connect(thisWeekPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onThisWeekPresetClicked);
+    connect(thisMonthPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onThisMonthPresetClicked);
+    connect(thisYearPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onThisYearPresetClicked);
 }
 
 QDate DateRangeSelector::getBeginDate() const

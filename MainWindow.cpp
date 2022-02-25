@@ -34,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     auto* timer = new QTimer(this);
     timer->start(1000);
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateTimeTracker()));
-    connect(dateRangeSelector, SIGNAL(dateChanged(QDate,QDate)), this, SLOT(onDateRangeChanged(QDate,QDate)));
+    connect(timer, &QTimer::timeout, this, &MainWindow::updateTimeTracker);
+    connect(dateRangeSelector, &DateRangeSelector::dateChanged, this, &MainWindow::onDateRangeChanged);
 
     timeTracker.loadData();
     chartsView->setDateRange(dateRangeSelector->getBeginDate(), dateRangeSelector->getEndDate());
