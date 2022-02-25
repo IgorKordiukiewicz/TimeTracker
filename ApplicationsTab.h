@@ -11,9 +11,6 @@ class ApplicationsTab : public QWidget
 public:
     ApplicationsTab(ApplicationsSettings& appsSettings, QWidget* parent = nullptr);
 
-private slots:
-    void onAppDisplayNameChanged(const QString& appName, const QString& newAppDisplayName);
-
 private:
     ApplicationsSettings& appsSettings;
 };

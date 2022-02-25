@@ -16,6 +16,7 @@
 #include "SettingsDialog.h"
 #include <QDataStream>
 #include <QFile>
+#include <random>
 
 ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     : QWidget(parent)
@@ -157,8 +158,8 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
 
 void ChartsView::onSettingsButtonClicked()
 {
-    auto* settingsDialog = new SettingsDialog(appsSettings, this);
-    if(settingsDialog->exec()) {
+    SettingsDialog settingsDialog(appsSettings);
+    if(settingsDialog.exec()) {
         updateChart();
     }
 }
@@ -168,7 +169,17 @@ void ChartsView::onNewAppTracked(const QString& appName)
     ApplicationSettings appSettings;
     appSettings.displayName = appName;
     appSettings.categoryName = "";
-    appSettings.chartColor = QColor(200, 0, 0); // TODO: generate random color
+    appSettings.chartColor = [](){
+        std::random_device randomDevice;
+        std::mt19937 engine(randomDevice());
+        std::uniform_real_distribution<double> hueDist(0.0, 1.0);
+        const double hue = hueDist(engine);
+        std::uniform_real_distribution<double> saturationDist(0.5, 0.9);
+        const double saturation = saturationDist(engine);
+        std::uniform_real_distribution<double> lightnessDist(0.5, 0.6);
+        const double lightness = lightnessDist(engine);
+        return QColor::fromHslF(hue, saturation, lightness);
+    }();
     appsSettings.insert(appName, std::move(appSettings));
 }
 
@@ -262,23 +273,24 @@ void ChartsView::updateChart()
     auto* barSeries = new QBarSeries;
     auto it = appData.constBegin();
     while(it != appData.constEnd()) {
-        // Try to find the app's overriden display name in apps settings
-        const QString name = [it, this]() {
+        // Try to find the app's settings
+        const auto [name, color] = [it, this]() -> QPair<QString, QColor> {
             if(auto appsSettingsIt = appsSettings.find(it.key()); appsSettingsIt != appsSettings.end()) {
-                return appsSettingsIt->displayName;
+                return { appsSettingsIt->displayName, appsSettingsIt->chartColor };
             }
             else {
-                return it.key();
+                return { it.key(), QColor() };
             }
         }();
         auto* barSet = new QBarSet(name);
+        barSet->setColor(color);
 
         if(groupBy == GroupBy::None) {
             int seconds = 0;
             for(const auto& dateRange : appData.value(it.key())) {
                 seconds += dateRange.first.secsTo(dateRange.second);
             }
-            const float hours = static_cast<float>(seconds) / 3600.f; // TODO: change to hours instead of minutes (hours as float)
+            const float hours = static_cast<float>(seconds) / 3600.f;
             maxTime = qMax(maxTime, hours);
             barSet->append(hours);
         }
