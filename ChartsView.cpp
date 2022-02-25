@@ -181,7 +181,7 @@ void ChartsView::updateChart()
         }
     }
 
-    int maxTime = 0;
+    float maxTime = 0.f;
     auto* barSeries = new QBarSeries;
     auto it = appData.constBegin();
     while(it != appData.constEnd()) {
@@ -191,9 +191,9 @@ void ChartsView::updateChart()
             for(const auto& dateRange : appData.value(it.key())) {
                 seconds += dateRange.first.secsTo(dateRange.second);
             }
-            const int minutes = seconds / 60; // TODO: change to hours instead of minutes (hours as float)
-            maxTime = qMax(maxTime, minutes);
-            barSet->append(minutes);
+            const float hours = static_cast<float>(seconds) / 3600.f; // TODO: change to hours instead of minutes (hours as float)
+            maxTime = qMax(maxTime, hours);
+            barSet->append(hours);
         }
         else {
             const auto dateRanges = appData.value(it.key());
@@ -226,9 +226,9 @@ void ChartsView::updateChart()
                     }
                 }
 
-                const int minutes = (seconds > 0 ? seconds / 60 : 0);
-                maxTime = qMax(maxTime, minutes);
-                barSet->append(minutes);
+                const float hours = static_cast<float>(seconds) / 3600.f;;
+                maxTime = qMax(maxTime, hours);
+                barSet->append(hours);
             }
         }
 
