@@ -26,6 +26,12 @@ set(PROJECT_SOURCES
         DateRangeSelector.cpp
         ChartsView.h
         ChartsView.cpp
+        SettingsDialog.h
+        SettingsDialog.cpp
+        CategoriesTab.h
+        CategoriesTab.cpp
+        ApplicationsTab.h
+        ApplicationsTab.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

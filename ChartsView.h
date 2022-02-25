@@ -20,6 +20,7 @@ public:
 private slots:
     void onGroupByComboBoxTextChanged(const QString& text);
     void onChartDataTypeComboBoxTextChanged(const QString& text);
+    void onSettingsButtonClicked();
 
 private:
     void updateData();

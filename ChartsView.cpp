@@ -12,6 +12,8 @@
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QLineSeries>
 #include <QTabWidget>
+#include <QPushButton>
+#include "SettingsDialog.h"
 
 ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     : QWidget(parent)
@@ -37,19 +39,23 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     chartDataTypeComboBox->addItem("Categories");
     chartDataTypeComboBox->addItem("Activity");
 
-    auto* groupByLayout = new QHBoxLayout;
-    groupByLayout->setAlignment(Qt::AlignLeft);
-    groupByLayout->addWidget(chartDataTypeComboBox);
-    groupByLayout->addWidget(groupByLabel);
-    groupByLayout->addWidget(groupByComboBox);
+    auto* settingsButton = new QPushButton("Settings");
+
+    auto* optionsLayout = new QHBoxLayout;
+    optionsLayout->setAlignment(Qt::AlignLeft);
+    optionsLayout->addWidget(chartDataTypeComboBox);
+    optionsLayout->addWidget(groupByLabel);
+    optionsLayout->addWidget(groupByComboBox);
+    optionsLayout->addWidget(settingsButton);
 
     auto* mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(groupByLayout);
+    mainLayout->addLayout(optionsLayout);
     mainLayout->addWidget(chartView);
     setLayout(mainLayout);
 
     connect(groupByComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onGroupByComboBoxTextChanged(QString)));
     connect(chartDataTypeComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onChartDataTypeComboBoxTextChanged(QString)));
+    connect(settingsButton, SIGNAL(clicked()), this, SLOT(onSettingsButtonClicked()));
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)
@@ -92,6 +98,14 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
     if(newChartDataType != chartDataType) {
         chartDataType = newChartDataType;
         updateData();
+    }
+}
+
+void ChartsView::onSettingsButtonClicked()
+{
+    auto* settingsDialog = new SettingsDialog(this);
+    if(settingsDialog->exec()) {
+        //
     }
 }
 
