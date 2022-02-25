@@ -19,11 +19,20 @@ public:
 
 private slots:
     void onGroupByComboBoxTextChanged(const QString& text);
+    void onChartDataTypeComboBoxTextChanged(const QString& text);
 
 private:
+    void updateData();
     void updateChart();
 
-private:
+private:   
+    enum class ChartDataType
+    {
+        Applications,
+        Categories,
+        Activity
+    } chartDataType{ ChartDataType::Applications };
+
     enum class GroupBy
     {
         None,

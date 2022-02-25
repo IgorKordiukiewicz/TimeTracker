@@ -10,6 +10,8 @@
 #include <QSet>
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QValueAxis>
+#include <QtCharts/QLineSeries>
+#include <QTabWidget>
 
 ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     : QWidget(parent)
@@ -30,8 +32,14 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     groupByComboBox->addItem("Month");
     groupByComboBox->addItem("Year");
 
+    auto* chartDataTypeComboBox = new QComboBox;
+    chartDataTypeComboBox->addItem("Applications");
+    chartDataTypeComboBox->addItem("Categories");
+    chartDataTypeComboBox->addItem("Activity");
+
     auto* groupByLayout = new QHBoxLayout;
     groupByLayout->setAlignment(Qt::AlignLeft);
+    groupByLayout->addWidget(chartDataTypeComboBox);
     groupByLayout->addWidget(groupByLabel);
     groupByLayout->addWidget(groupByComboBox);
 
@@ -41,14 +49,14 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     setLayout(mainLayout);
 
     connect(groupByComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onGroupByComboBoxTextChanged(QString)));
+    connect(chartDataTypeComboBox, SIGNAL(currentTextChanged(QString)), this, SLOT(onChartDataTypeComboBoxTextChanged(QString)));
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)
 {
-    appData = timeTracker->getDataInRange(beginDate, endDate);
     this->beginDate = beginDate;
     this->endDate = endDate;
-    updateChart();
+    updateData();
 }
 
 void ChartsView::onGroupByComboBoxTextChanged(const QString& text)
@@ -59,6 +67,58 @@ void ChartsView::onGroupByComboBoxTextChanged(const QString& text)
     }
     else {
         groupBy = GroupBy::None;
+    }
+
+    updateChart();
+}
+
+void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
+{
+    const ChartDataType newChartDataType = [&text](){
+        if(text == "Applications") {
+            return ChartDataType::Applications;
+        }
+        else if(text == "Categories") {
+            return ChartDataType::Categories;
+        }
+        else if(text == "Activity") {
+            return ChartDataType::Activity;
+        }
+        else {
+            return ChartDataType::Applications;
+        }
+    }();
+
+    if(newChartDataType != chartDataType) {
+        chartDataType = newChartDataType;
+        updateData();
+    }
+}
+
+void ChartsView::updateData()
+{
+    appData = timeTracker->getDataInRange(beginDate, endDate);
+
+    if(chartDataType == ChartDataType::Categories) {
+
+    }
+    else if(chartDataType == ChartDataType::Activity) {
+        TimeTracker::AppData newAppData;
+        auto dateRangesIt = newAppData.insert("Activity", QVector<TimeTracker::DateTimeRange>());
+        auto it = appData.constBegin();
+        while(it != appData.constEnd()) {
+            for(auto dateRange : appData.value(it.key())) {
+                dateRangesIt->push_back(std::move(dateRange));
+            }
+            ++it;
+        }
+
+        // Date ranges have to be sorted in increasing order to work properly
+        std::sort(dateRangesIt->begin(), dateRangesIt->end(), [](const auto& range1, const auto& range2){
+            return range1.first < range2.first;
+        });
+
+        appData = std::move(newAppData);
     }
 
     updateChart();
@@ -132,8 +192,8 @@ void ChartsView::updateChart()
                 seconds += dateRange.first.secsTo(dateRange.second);
             }
             const int minutes = seconds / 60; // TODO: change to hours instead of minutes (hours as float)
-            barSet->append(minutes);
             maxTime = qMax(maxTime, minutes);
+            barSet->append(minutes);
         }
         else {
             const auto dateRanges = appData.value(it.key());
@@ -156,7 +216,7 @@ void ChartsView::updateChart()
                         break;
                     }
                     // Second part of the date range is inside the date group, while the first part is in the previous date group
-                    else if(dateRangeBeginDate < dateGroups[i].first && dateRangeEndDate <= dateGroups[i].second){
+                    else if(dateRangeBeginDate < dateGroups[i].first && dateRangeEndDate <= dateGroups[i].second) {
                         seconds += QDateTime(dateGroups[i].first, QTime(0, 0)).secsTo(dateRangesIt->second);
                         ++dateRangesIt;
                     }
@@ -167,8 +227,8 @@ void ChartsView::updateChart()
                 }
 
                 const int minutes = (seconds > 0 ? seconds / 60 : 0);
-                barSet->append(minutes);
                 maxTime = qMax(maxTime, minutes);
+                barSet->append(minutes);
             }
         }
 

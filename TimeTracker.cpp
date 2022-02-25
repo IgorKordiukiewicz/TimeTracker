@@ -93,22 +93,22 @@ TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const Q
     AppData data;
     auto it = appData.constBegin();
     while(it != appData.constEnd()) {
-        auto dateRanges = data.insert(it.key(), {});
+        auto dateRangesIt = data.insert(it.key(), {});
         for(auto dateRange : appData.value(it.key())) {
             const QDate dateRangeBeginDate = dateRange.first.date();
             const QDate dateRangeEndDate = dateRange.second.date();
             if(dateRangeBeginDate >= beginDate && dateRangeEndDate <= endDate) {
-                dateRanges->push_back(std::move(dateRange));
+                dateRangesIt->push_back(std::move(dateRange));
             }
             else if(dateRangeBeginDate < beginDate && dateRangeEndDate >= beginDate) {
                 dateRange.first.setDate(beginDate);
                 dateRange.first.setTime(QTime());
-                dateRanges->push_back(std::move(dateRange));
+                dateRangesIt->push_back(std::move(dateRange));
             }
             else if(dateRangeEndDate > endDate && dateRangeBeginDate <= endDate) {
                 dateRange.second.setDate(endDate.addDays(1));
                 dateRange.second.setTime(QTime());
-                dateRanges->push_back(std::move(dateRange));
+                dateRangesIt->push_back(std::move(dateRange));
             }
         }
         ++it;

@@ -7,6 +7,7 @@
 #include "DateRangeSelector.h"
 #include "ChartsView.h"
 #include <QPushButton>
+#include <QFrame>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,8 +18,13 @@ MainWindow::MainWindow(QWidget *parent)
     dateRangeSelector = new DateRangeSelector;
     chartsView = new ChartsView(&timeTracker);
 
+    auto* line = new QFrame;
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+
     mainLayout = new QVBoxLayout;
     mainLayout->addWidget(dateRangeSelector);
+    mainLayout->addWidget(line);
     mainLayout->addWidget(chartsView);
 
     auto* layoutWidget = new QWidget;
