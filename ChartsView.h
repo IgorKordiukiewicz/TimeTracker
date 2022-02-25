@@ -2,8 +2,8 @@
 #define CHARTSVIEW_H
 
 #include <QWidget>
-#include <QHash>
 #include "TimeTracker.h"
+#include "ApplicationSettings.h"
 
 class QChartView;
 class QChart;
@@ -14,13 +14,17 @@ class ChartsView : public QWidget
 
 public:
     ChartsView(TimeTracker* timeTracker, QWidget* parent = nullptr);
+    ~ChartsView();
 
+    void saveAppsSettings();
+    void loadAppsSettings();
     void setDateRange(const QDate& beginDate, const QDate& endDate);
 
 private slots:
     void onGroupByComboBoxTextChanged(const QString& text);
     void onChartDataTypeComboBoxTextChanged(const QString& text);
     void onSettingsButtonClicked();
+    void onNewAppTracked(const QString& appName);
 
 private:
     void updateData();
@@ -50,6 +54,8 @@ private:
         {"Month", GroupBy::Month},
         {"Year", GroupBy::Year},
     };
+
+    ApplicationsSettings appsSettings;
 
     TimeTracker* timeTracker;
     TimeTracker::AppData appData;

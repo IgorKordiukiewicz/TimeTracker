@@ -26,6 +26,10 @@ void TimeTracker::update()
         return;
     }
 
+    if(!appData.contains(appName)) {
+        emit newAppTracked(appName);
+    }
+
     const QDateTime currentDateTime = QDateTime::currentDateTime();
 
     if (currentAppName.isEmpty()) {
@@ -57,6 +61,7 @@ void TimeTracker::saveData()
     QDataStream stream(&file);
     stream.setVersion(QDataStream::Qt_6_2);
 
+    // TEMPORARY
     appData.clear();
     appData.insert("App 1", QVector<DateTimeRange>({DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(12, 20)), QDateTime(QDate(2022, 2, 23), QTime(12, 30)))
                                                     , DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(23, 55)), QDateTime(QDate(2022, 2, 24), QTime(0, 5)))
@@ -84,8 +89,6 @@ void TimeTracker::loadData()
     stream >> appData;
 
     file.close();
-
-    print();
 }
 
 TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const QDate &endDate) const
@@ -115,6 +118,11 @@ TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const Q
     }
 
     return data;
+}
+
+const TimeTracker::AppData& TimeTracker::getData() const
+{
+    return appData;
 }
 
 QString TimeTracker::getCurrentApplicationName()

@@ -14,6 +14,8 @@
 #include <QTabWidget>
 #include <QPushButton>
 #include "SettingsDialog.h"
+#include <QDataStream>
+#include <QFile>
 
 ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     : QWidget(parent)
@@ -56,6 +58,58 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     connect(groupByComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onGroupByComboBoxTextChanged);
     connect(chartDataTypeComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onChartDataTypeComboBoxTextChanged);
     connect(settingsButton, &QPushButton::clicked, this, &ChartsView::onSettingsButtonClicked);
+    connect(timeTracker, &TimeTracker::newAppTracked, this, &ChartsView::onNewAppTracked);
+}
+
+ChartsView::~ChartsView()
+{
+    saveAppsSettings();
+}
+
+void ChartsView::saveAppsSettings()
+{
+    const QString fileName = "appSettings";
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "Failed to open file 'appSettings'";
+        return;
+    }
+
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_6_2);
+
+    // TEMPORARY
+    ApplicationsSettings appsSettingsTEMP;
+    appsSettingsTEMP.insert("App 1", ApplicationSettings{"App 1", "", QColor(200, 0, 0)});
+    appsSettingsTEMP.insert("App 2", ApplicationSettings{"App 2", "", QColor(0, 200, 0)});
+    stream << appsSettingsTEMP;
+    file.flush();
+    file.close();
+}
+
+void ChartsView::loadAppsSettings()
+{
+    const QString fileName = "appSettings";
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Failed to open file 'appSettings'";
+        return;
+    }
+
+    QDataStream stream(&file);
+    stream.setVersion(QDataStream::Qt_6_2);
+
+    stream >> appsSettings;
+    file.close();
+
+    const auto& appNames = timeTracker->getData().keys();
+    for(const auto& appName : appNames) {
+        if(!appsSettings.contains(appName)) {
+            onNewAppTracked(appName);
+        }
+    }
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)
@@ -103,10 +157,19 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
 
 void ChartsView::onSettingsButtonClicked()
 {
-    auto* settingsDialog = new SettingsDialog(this);
+    auto* settingsDialog = new SettingsDialog(appsSettings, this);
     if(settingsDialog->exec()) {
-        //
+        updateChart();
     }
+}
+
+void ChartsView::onNewAppTracked(const QString& appName)
+{
+    ApplicationSettings appSettings;
+    appSettings.displayName = appName;
+    appSettings.categoryName = "";
+    appSettings.chartColor = QColor(200, 0, 0); // TODO: generate random color
+    appsSettings.insert(appName, std::move(appSettings));
 }
 
 void ChartsView::updateData()
@@ -199,7 +262,17 @@ void ChartsView::updateChart()
     auto* barSeries = new QBarSeries;
     auto it = appData.constBegin();
     while(it != appData.constEnd()) {
-        auto* barSet = new QBarSet(it.key());
+        // Try to find the app's overriden display name in apps settings
+        const QString name = [it, this]() {
+            if(auto appsSettingsIt = appsSettings.find(it.key()); appsSettingsIt != appsSettings.end()) {
+                return appsSettingsIt->displayName;
+            }
+            else {
+                return it.key();
+            }
+        }();
+        auto* barSet = new QBarSet(name);
+
         if(groupBy == GroupBy::None) {
             int seconds = 0;
             for(const auto& dateRange : appData.value(it.key())) {

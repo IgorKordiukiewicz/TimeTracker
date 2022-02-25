@@ -6,11 +6,11 @@
 #include <QDialogButtonBox>
 #include "ApplicationsTab.h"
 
-SettingsDialog::SettingsDialog(QWidget* parent)
+SettingsDialog::SettingsDialog(ApplicationsSettings& appsSettings, QWidget* parent)
     : QDialog(parent)
 {
     categoriesTab = new CategoriesTab;
-    applicationsTab = new ApplicationsTab;
+    applicationsTab = new ApplicationsTab(appsSettings);
 
     auto* tabWidget = new QTabWidget;
     tabWidget->addTab(categoriesTab, "Categories");

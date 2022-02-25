@@ -32,6 +32,10 @@ set(PROJECT_SOURCES
         CategoriesTab.cpp
         ApplicationsTab.h
         ApplicationsTab.cpp
+        ApplicationSettings.h
+        ApplicationSettings.cpp
+        ApplicationSettingsEdit.h
+        ApplicationSettingsEdit.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

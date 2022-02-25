@@ -2,13 +2,20 @@
 #define APPLICATIONSTAB_H
 
 #include <QWidget>
+#include "ApplicationSettings.h"
 
 class ApplicationsTab : public QWidget
 {
     //Q_OBJECT
 
 public:
-    ApplicationsTab(QWidget* parent = nullptr);
+    ApplicationsTab(ApplicationsSettings& appsSettings, QWidget* parent = nullptr);
+
+private slots:
+    void onAppDisplayNameChanged(const QString& appName, const QString& newAppDisplayName);
+
+private:
+    ApplicationsSettings& appsSettings;
 };
 
 #endif // APPLICATIONSTAB_H

@@ -6,29 +6,31 @@
 #include <QDate>
 #include <QPair>
 
-class TimeTracker
+class TimeTracker : public QObject
 {
+    Q_OBJECT
+
 public:
     using DateTimeRange = QPair<QDateTime, QDateTime>;
     using AppData = QMap<QString, QVector<DateTimeRange>>;
 
     TimeTracker();
     ~TimeTracker();
-    TimeTracker(const TimeTracker&) = default;
-    TimeTracker& operator=(const TimeTracker&) = default;
-    TimeTracker(TimeTracker&&) = default;
-    TimeTracker& operator=(TimeTracker&&) = default;
 
     void update();
     void saveData();
     void loadData();
 
     AppData getDataInRange(const QDate& beginDate, const QDate& endDate) const;
+    const AppData& getData() const;
 
     static QString getCurrentApplicationName();
 
     // temporary
     void print();
+
+signals:
+    void newAppTracked(const QString& appName);
 
 private:
     AppData appData;
