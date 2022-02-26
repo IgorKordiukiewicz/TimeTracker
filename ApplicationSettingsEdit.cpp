@@ -20,6 +20,7 @@ ApplicationSettingsEdit::ApplicationSettingsEdit(const QString& appName, Applica
 
     categoriesComboBox = new QComboBox;
     categoriesComboBox->addItems(categoriesList);
+    categoriesComboBox->setCurrentText(appSettings.categoryName);
 
     colorButton = new QPushButton("Color");
     QPixmap pixmap(16, 16);

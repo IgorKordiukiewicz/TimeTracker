@@ -208,7 +208,7 @@ void ChartsView::onSettingsButtonClicked()
 {
     SettingsDialog settingsDialog(appsSettings, categoriesSettings);
     if(settingsDialog.exec()) {
-        updateChart();
+        updateData();
     }
 }
 
@@ -226,9 +226,31 @@ void ChartsView::updateData()
     appData = timeTracker->getDataInRange(beginDate, endDate);
 
     if(chartDataType == ChartDataType::Categories) {
+        TimeTracker::AppData newAppData;
+        // Create new app data with key for every category
+        for(auto it = categoriesSettings.constBegin(); it != categoriesSettings.constEnd(); ++it) {
+            newAppData.insert(it.key(), QVector<TimeTracker::DateTimeRange>());
+        }
 
+        for(auto it = appData.constBegin(); it != appData.constEnd(); ++it) {
+            // If app has a category assigned, add its date time ranges to the category's date time ranges
+            const QString categoryName = appsSettings[it.key()].categoryName;
+            if(!categoryName.isEmpty()) {
+                newAppData[categoryName].append(it.value());
+            }
+        }
+
+        // Date ranges have to be sorted in increasing order to work properly
+        for(auto it = newAppData.begin(); it != newAppData.end(); ++it) {
+            std::sort(it.value().begin(), it.value().end(), [](const auto& range1, const auto& range2) {
+                return range1.first < range2.first;
+            });
+        }
+
+        appData = std::move(newAppData);
     }
     else if(chartDataType == ChartDataType::Activity) {
+        // Merge all apps date time ranges into one
         TimeTracker::AppData newAppData;
         auto dateRangesIt = newAppData.insert("Activity", QVector<TimeTracker::DateTimeRange>());
         auto it = appData.constBegin();
@@ -311,15 +333,30 @@ void ChartsView::updateChart()
     auto* barSeries = new QBarSeries;
     auto it = appData.constBegin();
     while(it != appData.constEnd()) {
-        // Try to find the app's settings
+        // Get the bar chart name and color
         const auto [name, color] = [it, this]() -> QPair<QString, QColor> {
-            if(auto appsSettingsIt = appsSettings.find(it.key()); appsSettingsIt != appsSettings.end()) {
-                return { appsSettingsIt->displayName, appsSettingsIt->chartColor };
+            switch(chartDataType) {
+            case ChartDataType::Applications: {
+                // Try to find the name & color in the apps settings
+                if(auto appsSettingsIt = appsSettings.find(it.key()); appsSettingsIt != appsSettings.end()) {
+                    return { appsSettingsIt->displayName, appsSettingsIt->chartColor };
+                }
+                break;
             }
-            else {
-                return { it.key(), QColor() };
+            case ChartDataType::Categories: {
+                // Try to find the color in the categories settings
+                if(auto categoriesSettingsIt = categoriesSettings.find(it.key()); categoriesSettingsIt != categoriesSettings.end()) {
+                    return {it.key(), categoriesSettingsIt->chartColor };
+                }
+                break;
             }
+            case ChartDataType::Activity: {
+                return { it.key(), activityChartColor };
+            }
+            }
+            return { it.key(), QColor() };
         }();
+
         auto* barSet = new QBarSet(name);
         barSet->setColor(color);
 

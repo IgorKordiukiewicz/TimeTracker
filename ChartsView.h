@@ -62,6 +62,8 @@ private:
     ApplicationsSettings appsSettings;
     CategoriesSettings categoriesSettings;
 
+    QColor activityChartColor{ QColor::fromHslF(0.55, 0.70, 0.55) };
+
     TimeTracker* timeTracker;
     TimeTracker::AppData appData;
     QDate beginDate;
