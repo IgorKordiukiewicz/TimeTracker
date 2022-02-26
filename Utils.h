@@ -6,6 +6,7 @@
 namespace Utils
 {
     QColor generateRandomColorForChart();
+    QString getTimeAsString(int seconds);
 }
 
 #endif // UTILS_H

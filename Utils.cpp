@@ -15,4 +15,14 @@ namespace Utils
         const double lightness{ lightnessDist(engine) };
         return QColor::fromHslF(hue, saturation, lightness);
     }
+
+    QString getTimeAsString(int seconds)
+    {
+        const int hours{ seconds / 3600 };
+        seconds /= 3600;
+        const int minutes{ seconds / 60 };
+        const QString hoursText{ QString::number(hours) + "h" };
+        const QString minutesText{ QString::number(minutes) + "m" };
+        return hoursText + " " + minutesText;
+    }
 }

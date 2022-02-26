@@ -7,6 +7,7 @@
 
 class QChartView;
 class QChart;
+class QBarSet;
 
 class ChartsView : public QWidget
 {
@@ -25,6 +26,7 @@ private slots:
     void onChartDataTypeComboBoxTextChanged(const QString& text);
     void onSettingsButtonClicked();
     void onNewAppTracked(const QString& appName);
+    void onBarSetHovered(bool status, int, QBarSet* barSet);
 
 private:
     void saveAppsSettings();

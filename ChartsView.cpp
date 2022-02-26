@@ -221,6 +221,17 @@ void ChartsView::onNewAppTracked(const QString& appName)
     appsSettings.insert(appName, std::move(appSettings));
 }
 
+void ChartsView::onBarSetHovered(bool status, int, QBarSet* barSet)
+{
+    // Make visible when hovered and insvisible otherwise
+    if(status) {
+        barSet->setLabelColor(Qt::black);
+    }
+    else {
+        barSet->setLabelColor(Qt::transparent);
+    }
+}
+
 void ChartsView::updateData()
 {
     appData = timeTracker->getDataInRange(beginDate, endDate);
@@ -382,6 +393,7 @@ void ChartsView::updateChart()
 
         auto* barSet = new QBarSet(name);
         barSet->setColor(color);
+        barSet->setLabelColor(Qt::transparent); // labels should be initially invisible
 
         if(groupBy == GroupBy::None) {
             int seconds{ 0 };
@@ -391,6 +403,7 @@ void ChartsView::updateChart()
             const float hours{ static_cast<float>(seconds) / 3600.f };
             maxTime = qMax(maxTime, hours);
             barSet->append(hours);
+            //barSet->setLabel(Utils::getTimeAsString(seconds));
         }
         else {
             const QVector<TimeTracker::DateTimeRange> dateRanges{ appData.value(it.key()) };
@@ -426,6 +439,7 @@ void ChartsView::updateChart()
                 const float hours{ static_cast<float>(seconds) / 3600.f };
                 maxTime = qMax(maxTime, hours);
                 barSet->append(hours);
+                //barSet->setLabel(Utils::getTimeAsString(seconds));
             }
         }
 
@@ -441,12 +455,17 @@ void ChartsView::updateChart()
 
     // Initialize chart
     chart = new QChart;
-    chart->setTitle("Application time");
     chart->addSeries(barSeries);
     chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addAxis(yAxis, Qt::AlignLeft);
     barSeries->attachAxis(xAxis);
     barSeries->attachAxis(yAxis);
+    barSeries->setLabelsFormat("@value h");
+    barSeries->setLabelsPrecision(1);
+
+    barSeries->setLabelsVisible(true);
+    barSeries->setLabelsPosition(QAbstractBarSeries::LabelsOutsideEnd);
+    connect(barSeries, &QBarSeries::hovered, this, &ChartsView::onBarSetHovered);
 
     QChart* oldChart{ chartView->chart() };
     chartView->setChart(chart);
