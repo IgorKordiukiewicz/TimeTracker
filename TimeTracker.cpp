@@ -2,6 +2,7 @@
 #include <array>
 #include <memory>
 #include <QFile>
+#include "FileIO.h"
 
 #if defined(Q_OS_WINDOWS)
 #include <windows.h>
@@ -51,42 +52,21 @@ void TimeTracker::update()
 
 void TimeTracker::saveData()
 {
-    QFile file{ "applicationsData" };
+    // TEMPORARY, TODO: REMOVE
+    auto appDataT{ appData };
+    appDataT.clear();
+    appDataT.insert("App 1", QVector<TimeTracker::DateTimeRange>({TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(12, 20)), QDateTime(QDate(2022, 2, 23), QTime(12, 30)))
+                                                    , TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(23, 55)), QDateTime(QDate(2022, 2, 24), QTime(0, 5)))
+                                                    , TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 30)), QDateTime(QDate(2022, 2, 24), QTime(14, 35)))}));
+    appDataT.insert("App 2", QVector<TimeTracker::DateTimeRange>({TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 16), QTime(14, 42)), QDateTime(QDate(2022, 2, 16), QTime(14, 47))),
+                                                       TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 42)), QDateTime(QDate(2022, 2, 24), QTime(14, 47)))}));
 
-    if (!file.open(QIODevice::WriteOnly)) {
-        return;
-    }
-
-    QDataStream stream{ &file };
-    stream.setVersion(QDataStream::Qt_6_2);
-
-    // TEMPORARY
-    appData.clear();
-    appData.insert("App 1", QVector<DateTimeRange>({DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(12, 20)), QDateTime(QDate(2022, 2, 23), QTime(12, 30)))
-                                                    , DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(23, 55)), QDateTime(QDate(2022, 2, 24), QTime(0, 5)))
-                                                    , DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 30)), QDateTime(QDate(2022, 2, 24), QTime(14, 35)))}));
-    appData.insert("App 2", QVector<DateTimeRange>({DateTimeRange(QDateTime(QDate(2022, 2, 16), QTime(14, 42)), QDateTime(QDate(2022, 2, 16), QTime(14, 47))),
-                                                       DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 42)), QDateTime(QDate(2022, 2, 24), QTime(14, 47)))}));
-    stream << appData;
-
-    file.flush();
-    file.close();
+    FileIO::save("applicationsData", appDataT);
 }
 
 void TimeTracker::loadData()
 {
-    QFile file{ "applicationsData" };
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        return;
-    }
-
-    QDataStream stream{ &file };
-    stream.setVersion(QDataStream::Qt_6_2);
-
-    stream >> appData;
-
-    file.close();
+    FileIO::load("applicationsData", appData);
 }
 
 TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const QDate &endDate) const

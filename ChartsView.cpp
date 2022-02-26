@@ -18,6 +18,7 @@
 #include <QFile>
 #include <random>
 #include "Utils.h"
+#include "FileIO.h"
 
 ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     : QWidget(parent)
@@ -70,68 +71,19 @@ ChartsView::~ChartsView()
 
 void ChartsView::saveSettings()
 {
-    saveCategoriesSettings();
-    saveAppsSettings();
+    // TEMPORARY, TODO: REMOVE
+    ApplicationsSettings appsSettingsTEMP;
+    appsSettingsTEMP.insert("App 1", ApplicationSettings{"App 1", "", QColor(200, 0, 0)});
+    appsSettingsTEMP.insert("App 2", ApplicationSettings{"App 2", "", QColor(0, 200, 0)});
+
+    FileIO::save("categoriesSettings", categoriesSettings);
+    FileIO::save("appSettings", appsSettingsTEMP);
 }
 
 void ChartsView::loadSettings()
 {
-    loadCategoriesSettings();
-    loadAppsSettings();
-}
-
-void ChartsView::saveAppsSettings()
-{
-    QFile file{ "appSettings" };
-
-    if(!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "Failed to open file 'appSettings'";
-        return;
-    }
-
-    QDataStream stream{ &file };
-    stream.setVersion(QDataStream::Qt_6_2);
-
-    // TEMPORARY
-    ApplicationsSettings appsSettingsTEMP;
-    appsSettingsTEMP.insert("App 1", ApplicationSettings{"App 1", "", QColor(200, 0, 0)});
-    appsSettingsTEMP.insert("App 2", ApplicationSettings{"App 2", "", QColor(0, 200, 0)});
-    stream << appsSettingsTEMP;
-    file.flush();
-    file.close();
-}
-
-void ChartsView::saveCategoriesSettings()
-{
-    QFile file{ "categoriesSettings" };
-
-    if(!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "Failed to open file 'categoriesSettings'";
-        return;
-    }
-
-    QDataStream stream{ &file };
-    stream.setVersion(QDataStream::Qt_6_2);
-
-    stream << categoriesSettings;
-    file.flush();
-    file.close();
-}
-
-void ChartsView::loadAppsSettings()
-{
-    QFile file{ "appSettings" };
-
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Failed to open file 'appSettings'";
-        return;
-    }
-
-    QDataStream stream{ &file };
-    stream.setVersion(QDataStream::Qt_6_2);
-
-    stream >> appsSettings;
-    file.close();
+    FileIO::load("categoriesSettings", categoriesSettings);
+    FileIO::load("appSettings", appsSettings);
 
     // Update apps settings if it is not complete (probably should never happen outside of debugging after data file is reset, TODO: remove later?)
     const auto& appNames{ timeTracker->getData().keys() };
@@ -140,22 +92,6 @@ void ChartsView::loadAppsSettings()
             onNewAppTracked(appName);
         }
     }
-}
-
-void ChartsView::loadCategoriesSettings()
-{
-    QFile file{ "categoriesSettings" };
-
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Failed to open file 'categoriesSettings'";
-        return;
-    }
-
-    QDataStream stream{ &file };
-    stream.setVersion(QDataStream::Qt_6_2);
-
-    stream >> categoriesSettings;
-    file.close();
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)

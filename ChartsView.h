@@ -29,10 +29,6 @@ private slots:
     void onBarSetHovered(bool status, int, QBarSet* barSet);
 
 private:
-    void saveAppsSettings();
-    void saveCategoriesSettings();
-    void loadAppsSettings();
-    void loadCategoriesSettings();
     void updateData();
     void updateChart();
 

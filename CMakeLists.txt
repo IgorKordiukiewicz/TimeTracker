@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
         CategorySettingsEdit.cpp
         Utils.h
         Utils.cpp
+        FileIO.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
