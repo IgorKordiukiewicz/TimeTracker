@@ -12,7 +12,7 @@ ApplicationSettingsEdit::ApplicationSettingsEdit(const QString& appName, Applica
     , appName(appName)
     , appSettings(appSettings)
 {
-    auto* appNameLabel = new QLabel(appName);
+    auto* appNameLabel = new QLabel{ appName };
     appNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     appDisplayNameEdit = new QLineEdit;
@@ -22,8 +22,8 @@ ApplicationSettingsEdit::ApplicationSettingsEdit(const QString& appName, Applica
     categoriesComboBox->addItems(categoriesList);
     categoriesComboBox->setCurrentText(appSettings.categoryName);
 
-    colorButton = new QPushButton("Color");
-    QPixmap pixmap(16, 16);
+    colorButton = new QPushButton{ "Color" };
+    QPixmap pixmap{ 16, 16 };
     pixmap.fill(appSettings.chartColor);
     colorButton->setIcon(pixmap);
 
@@ -46,7 +46,7 @@ void ApplicationSettingsEdit::addCategory(const QString &categoryName)
 
 void ApplicationSettingsEdit::removeCategory(const QString &categoryName)
 {
-    if(int idx = categoriesComboBox->findText(categoryName); idx != -1) {
+    if(int idx{ categoriesComboBox->findText(categoryName) }; idx != -1) {
         categoriesComboBox->removeItem(idx);
         if(appSettings.categoryName == categoryName) {
             appSettings.categoryName.clear();
@@ -72,11 +72,11 @@ void ApplicationSettingsEdit::onCategoryComboBoxCurrentTextChanged(const QString
 
 void ApplicationSettingsEdit::onColorButtonClicked()
 {
-    QColorDialog colorDialog(appSettings.chartColor);
+    QColorDialog colorDialog{ appSettings.chartColor };
     if(colorDialog.exec()) {
         appSettings.chartColor = colorDialog.selectedColor();
 
-        QPixmap pixmap(16, 16);
+        QPixmap pixmap{ 16, 16 };
         pixmap.fill(appSettings.chartColor);
         colorButton->setIcon(pixmap);
     }

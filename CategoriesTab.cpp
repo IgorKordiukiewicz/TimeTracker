@@ -12,13 +12,13 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
     , categoriesSettings(categoriesSettings)
 {
     newCategoryNameLineEdit = new QLineEdit;
-    auto* newCategoryButton = new QPushButton("Add Category");
+    auto* newCategoryButton = new QPushButton{ "Add Category" };
 
     categoriesEditLayout = new QVBoxLayout(this);
     categoriesEditLayout->setAlignment(Qt::AlignTop);
 
-    for(auto it = categoriesSettings.begin(); it != categoriesSettings.end(); ++it) {
-        auto categorySettingsEdit = new CategorySettingsEdit(it.key(), it.value());
+    for(auto it{ categoriesSettings.begin() }; it != categoriesSettings.end(); ++it) {
+        auto categorySettingsEdit = new CategorySettingsEdit{ it.key(), it.value() };
         categoriesEditLayout->addWidget(categorySettingsEdit);
         connect(categorySettingsEdit, &CategorySettingsEdit::deleteCategory, this, &CategoriesTab::onDeleteCategory);
     }
@@ -29,7 +29,6 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
 
     auto* scrollAreaWidget = new QWidget;
     scrollAreaWidget->setLayout(categoriesEditLayout);
-    scrollAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     scrollArea = new QScrollArea;
     scrollArea->setWidget(scrollAreaWidget);
 
@@ -43,18 +42,18 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
 
 void CategoriesTab::onNewCategoryButtonClicked()
 {
-    if(const QString categoryName = newCategoryNameLineEdit->text(); !categoryName.isEmpty() && !categoriesSettings.contains(categoryName)) {
+    if(const QString categoryName{ newCategoryNameLineEdit->text() }; !categoryName.isEmpty() && !categoriesSettings.contains(categoryName)) {
         CategorySettings categorySettings;
         categorySettings.chartColor = Utils::generateRandomColorForChart();
-        auto it = categoriesSettings.insert(categoryName, std::move(categorySettings));
+        auto it{ categoriesSettings.insert(categoryName, std::move(categorySettings)) };
 
         // Create new category settings edit widget
-        auto* newCategorySettingsEdit = new CategorySettingsEdit(categoryName, it.value());
+        auto* newCategorySettingsEdit = new CategorySettingsEdit{ categoryName, it.value() };
         categoriesEditLayout->addWidget(newCategorySettingsEdit);
         connect(newCategorySettingsEdit, &CategorySettingsEdit::deleteCategory, this, &CategoriesTab::onDeleteCategory);
 
         // Create a new scroll area widget to add the just created settings edit widget to the scroll area
-        auto* oldScrollAreaWidget = scrollArea->takeWidget();
+        QWidget* oldScrollAreaWidget{ scrollArea->takeWidget() };
         oldScrollAreaWidget->deleteLater();
         auto* scrollAreaWidget = new QWidget;
         scrollAreaWidget->setLayout(categoriesEditLayout);

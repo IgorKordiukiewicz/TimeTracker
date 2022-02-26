@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     dateRangeSelector = new DateRangeSelector;
-    chartsView = new ChartsView(&timeTracker);
+    chartsView = new ChartsView{ &timeTracker };
 
     auto* line = new QFrame;
     line->setFrameShape(QFrame::HLine);
@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     layoutWidget->setLayout(mainLayout);
     setCentralWidget(layoutWidget);
 
-    auto* timer = new QTimer(this);
+    auto* timer = new QTimer{ this };
     timer->start(1000);
 
     connect(timer, &QTimer::timeout, this, &MainWindow::updateTimeTracker);

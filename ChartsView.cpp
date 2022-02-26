@@ -25,10 +25,10 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
 {
     chart = new QChart;
 
-    chartView = new QChartView(chart, this);
+    chartView = new QChartView{ chart };
     chartView->setRenderHint(QPainter::Antialiasing);
 
-    auto* groupByLabel = new QLabel("Group by:");
+    auto* groupByLabel = new QLabel{ "Group by:" };
 
     auto* groupByComboBox = new QComboBox;
     // Items have to be added manually because in QHash the items are arbitrarily ordered
@@ -43,7 +43,7 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     chartDataTypeComboBox->addItem("Categories");
     chartDataTypeComboBox->addItem("Activity");
 
-    auto* settingsButton = new QPushButton("Settings");
+    auto* settingsButton = new QPushButton{ "Settings" };
 
     auto* optionsLayout = new QHBoxLayout;
     optionsLayout->setAlignment(Qt::AlignLeft);
@@ -82,15 +82,14 @@ void ChartsView::loadSettings()
 
 void ChartsView::saveAppsSettings()
 {
-    const QString fileName = "appSettings";
-    QFile file(fileName);
+    QFile file{ "appSettings" };
 
     if(!file.open(QIODevice::WriteOnly)) {
         qDebug() << "Failed to open file 'appSettings'";
         return;
     }
 
-    QDataStream stream(&file);
+    QDataStream stream{ &file };
     stream.setVersion(QDataStream::Qt_6_2);
 
     // TEMPORARY
@@ -104,15 +103,14 @@ void ChartsView::saveAppsSettings()
 
 void ChartsView::saveCategoriesSettings()
 {
-    const QString fileName = "categoriesSettings";
-    QFile file(fileName);
+    QFile file{ "categoriesSettings" };
 
     if(!file.open(QIODevice::WriteOnly)) {
         qDebug() << "Failed to open file 'categoriesSettings'";
         return;
     }
 
-    QDataStream stream(&file);
+    QDataStream stream{ &file };
     stream.setVersion(QDataStream::Qt_6_2);
 
     stream << categoriesSettings;
@@ -122,23 +120,22 @@ void ChartsView::saveCategoriesSettings()
 
 void ChartsView::loadAppsSettings()
 {
-    const QString fileName = "appSettings";
-    QFile file(fileName);
+    QFile file{ "appSettings" };
 
     if(!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Failed to open file 'appSettings'";
         return;
     }
 
-    QDataStream stream(&file);
+    QDataStream stream{ &file };
     stream.setVersion(QDataStream::Qt_6_2);
 
     stream >> appsSettings;
     file.close();
 
     // Update apps settings if it is not complete (probably should never happen outside of debugging after data file is reset, TODO: remove later?)
-    const auto& appNames = timeTracker->getData().keys();
-    for(const auto& appName : appNames) {
+    const auto& appNames{ timeTracker->getData().keys() };
+    for(const QString& appName : appNames) {
         if(!appsSettings.contains(appName)) {
             onNewAppTracked(appName);
         }
@@ -147,15 +144,14 @@ void ChartsView::loadAppsSettings()
 
 void ChartsView::loadCategoriesSettings()
 {
-    const QString fileName = "categoriesSettings";
-    QFile file(fileName);
+    QFile file{ "categoriesSettings" };
 
     if(!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Failed to open file 'categoriesSettings'";
         return;
     }
 
-    QDataStream stream(&file);
+    QDataStream stream{ &file };
     stream.setVersion(QDataStream::Qt_6_2);
 
     stream >> categoriesSettings;
@@ -171,7 +167,7 @@ void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)
 
 void ChartsView::onGroupByComboBoxTextChanged(const QString& text)
 {
-    auto it = groupByNames.find(text);
+    auto it{ groupByNames.find(text) };
     if(it != groupByNames.end()) {
         groupBy = it.value();
     }
@@ -207,7 +203,7 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
 
 void ChartsView::onSettingsButtonClicked()
 {
-    SettingsDialog settingsDialog(appsSettings, categoriesSettings);
+    SettingsDialog settingsDialog{ appsSettings, categoriesSettings };
     if(settingsDialog.exec()) {
         // appsSettings and categoriesSettings are updated only if user confirmed changes made in settings dialog
         appsSettings = settingsDialog.getAppsSettings();
@@ -232,20 +228,20 @@ void ChartsView::updateData()
     if(chartDataType == ChartDataType::Categories) {
         TimeTracker::AppData newAppData;
         // Create new app data with key for every category
-        for(auto it = categoriesSettings.constBegin(); it != categoriesSettings.constEnd(); ++it) {
+        for(auto it{ categoriesSettings.constBegin() }; it != categoriesSettings.constEnd(); ++it) {
             newAppData.insert(it.key(), QVector<TimeTracker::DateTimeRange>());
         }
 
-        for(auto it = appData.constBegin(); it != appData.constEnd(); ++it) {
+        for(auto it{ appData.constBegin() }; it != appData.constEnd(); ++it) {
             // If app has a category assigned, add its date time ranges to the category's date time ranges
-            const QString categoryName = appsSettings[it.key()].categoryName;
+            const QString categoryName{ appsSettings[it.key()].categoryName };
             if(!categoryName.isEmpty()) {
                 newAppData[categoryName].append(it.value());
             }
         }
 
         // Date ranges have to be sorted in increasing order to work properly
-        for(auto it = newAppData.begin(); it != newAppData.end(); ++it) {
+        for(auto it{ newAppData.begin() }; it != newAppData.end(); ++it) {
             std::sort(it.value().begin(), it.value().end(), [](const auto& range1, const auto& range2) {
                 return range1.first < range2.first;
             });
@@ -257,8 +253,8 @@ void ChartsView::updateData()
         // Merge all apps date time ranges into one
         TimeTracker::AppData newAppData;
         auto dateRangesIt = newAppData.insert("Activity", QVector<TimeTracker::DateTimeRange>());
-        for(auto it = appData.constBegin(); it != appData.constEnd(); ++it) {
-            for(auto dateRange : appData.value(it.key())) {
+        for(auto it{ appData.constBegin() }; it != appData.constEnd(); ++it) {
+            for(TimeTracker::DateTimeRange dateRange : appData.value(it.key())) {
                 dateRangesIt->push_back(std::move(dateRange));
             }
         }
@@ -283,7 +279,7 @@ void ChartsView::updateChart()
         categories.append(beginDate.toString() + " - " + endDate.toString());
     }
     else {
-        QDate currentDate = beginDate;
+        QDate currentDate{ beginDate };
         switch(groupBy) {
         case GroupBy::Week:
             currentDate = currentDate.addDays(-currentDate.dayOfWeek() + 1);
@@ -300,7 +296,7 @@ void ChartsView::updateChart()
 
         // Initialize date groups
         while(currentDate <= endDate) {
-            const QDate groupBeginDate = currentDate;
+            const QDate groupBeginDate{ currentDate };
             const QDate groupEndDate = [&groupBeginDate, this](){
                 QDate date = groupBeginDate;
                 switch(groupBy) {
@@ -331,23 +327,23 @@ void ChartsView::updateChart()
         }
     }
 
-    float maxTime = 0.f;
+    float maxTime{ 0.f };
     auto* barSeries = new QBarSeries;
-    auto it = appData.constBegin();
+    auto it{ appData.constBegin() };
     while(it != appData.constEnd()) {
         // Get the bar chart name and color
         const auto [name, color] = [it, this]() -> QPair<QString, QColor> {
             switch(chartDataType) {
             case ChartDataType::Applications: {
                 // Try to find the name & color in the apps settings
-                if(auto appsSettingsIt = appsSettings.find(it.key()); appsSettingsIt != appsSettings.end()) {
+                if(auto appsSettingsIt{ appsSettings.find(it.key()) }; appsSettingsIt != appsSettings.end()) {
                     return { appsSettingsIt->displayName, appsSettingsIt->chartColor };
                 }
                 break;
             }
             case ChartDataType::Categories: {
                 // Try to find the color in the categories settings
-                if(auto categoriesSettingsIt = categoriesSettings.find(it.key()); categoriesSettingsIt != categoriesSettings.end()) {
+                if(auto categoriesSettingsIt{ categoriesSettings.find(it.key()) }; categoriesSettingsIt != categoriesSettings.end()) {
                     return {it.key(), categoriesSettingsIt->chartColor };
                 }
                 break;
@@ -363,23 +359,23 @@ void ChartsView::updateChart()
         barSet->setColor(color);
 
         if(groupBy == GroupBy::None) {
-            int seconds = 0;
-            for(const auto& dateRange : appData.value(it.key())) {
+            int seconds{ 0 };
+            for(const TimeTracker::DateTimeRange& dateRange : appData.value(it.key())) {
                 seconds += dateRange.first.secsTo(dateRange.second);
             }
-            const float hours = static_cast<float>(seconds) / 3600.f;
+            const float hours{ static_cast<float>(seconds) / 3600.f };
             maxTime = qMax(maxTime, hours);
             barSet->append(hours);
         }
         else {
-            const auto dateRanges = appData.value(it.key());
+            const QVector<TimeTracker::DateTimeRange> dateRanges{ appData.value(it.key()) };
             auto dateRangesIt = dateRanges.constBegin();
             // For each date group try to find app usage date ranges that are within the group's date range
-            for(int i = 0; i < dateGroups.size(); ++i) {
-                int seconds = 0;
+            for(int i{ 0 }; i < dateGroups.size(); ++i) {
+                int seconds{ 0 };
                 while(dateRangesIt != dateRanges.constEnd()) {
-                    const QDate dateRangeBeginDate = dateRangesIt->first.date();
-                    const QDate dateRangeEndDate = dateRangesIt->second.date();
+                    const QDate dateRangeBeginDate{ dateRangesIt->first.date() };
+                    const QDate dateRangeEndDate{ dateRangesIt->second.date() };
                     // Date range is completely inside the date group
                     if(dateRangeBeginDate >= dateGroups[i].first && dateRangeEndDate <= dateGroups[i].second) {
                         seconds += dateRangesIt->first.secsTo(dateRangesIt->second);
@@ -402,7 +398,7 @@ void ChartsView::updateChart()
                     }
                 }
 
-                const float hours = static_cast<float>(seconds) / 3600.f;;
+                const float hours{ static_cast<float>(seconds) / 3600.f };
                 maxTime = qMax(maxTime, hours);
                 barSet->append(hours);
             }
@@ -427,7 +423,7 @@ void ChartsView::updateChart()
     barSeries->attachAxis(xAxis);
     barSeries->attachAxis(yAxis);
 
-    auto* oldChart = chartView->chart();
+    QChart* oldChart{ chartView->chart() };
     chartView->setChart(chart);
-    delete oldChart;
+    oldChart->deleteLater();
 }

@@ -9,23 +9,25 @@
 DateRangeSelector::DateRangeSelector(QWidget* parent)
     : QWidget(parent)
 {
-    auto* beginDateLabel = new QLabel("From:");
+    const QDate currentDate { QDate::currentDate() };
+
+    auto* beginDateLabel = new QLabel{ "From:" };
     beginDateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    beginDateEdit = new QDateEdit(QDate::currentDate());
-    beginDateEdit->setMaximumDate(QDate::currentDate());
+    beginDateEdit = new QDateEdit{ currentDate };
+    beginDateEdit->setMaximumDate(currentDate);
 
-    auto* endDateLabel = new QLabel("To:");
+    auto* endDateLabel = new QLabel{ "To:" };
     endDateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    endDateEdit = new QDateEdit(QDate::currentDate());
-    endDateEdit->setMaximumDate(QDate::currentDate());
+    endDateEdit = new QDateEdit{ currentDate };
+    endDateEdit->setMaximumDate(currentDate);
 
-    auto* todayPresetButton = new QPushButton("Today");
-    auto* yesterdayPresetButton = new QPushButton("Yesterday");
-    auto* thisWeekPresetButton = new QPushButton("This Week");
-    auto* thisMonthPresetButton = new QPushButton("This Month");
-    auto* thisYearPresetButton = new QPushButton("This Year");
+    auto* todayPresetButton = new QPushButton{ "Today" };
+    auto* yesterdayPresetButton = new QPushButton{ "Yesterday" };
+    auto* thisWeekPresetButton = new QPushButton{ "This Week" };
+    auto* thisMonthPresetButton = new QPushButton{ "This Month" };
+    auto* thisYearPresetButton = new QPushButton{ "This Year" };
 
     // Initialize date edits layout
     auto* dateEditsLayout = new QHBoxLayout;
@@ -96,20 +98,20 @@ void DateRangeSelector::onEndDateChanged(QDate newDate)
 
 void DateRangeSelector::onTodayPresetClicked()
 {
-    const QDate currentDate = QDate::currentDate();
+    const QDate currentDate{ QDate::currentDate() };
     handlePresetClicked(currentDate, currentDate);
 }
 
 void DateRangeSelector::onYesterdayPresetClicked()
 {
-    const QDate yesterdayDate = QDate::currentDate().addDays(-1);
+    const QDate yesterdayDate{ QDate::currentDate().addDays(-1) };
     handlePresetClicked(yesterdayDate, yesterdayDate);
 }
 
 void DateRangeSelector::onThisWeekPresetClicked()
 {
     const QDate weekStartDate = [](){
-        QDate date = QDate::currentDate();
+        QDate date{ QDate::currentDate() };
         date = date.addDays(-date.dayOfWeek() + 1);
         return date;
     }();
@@ -119,7 +121,7 @@ void DateRangeSelector::onThisWeekPresetClicked()
 void DateRangeSelector::onThisMonthPresetClicked()
 {
     const QDate monthStartDate = [](){
-        QDate date = QDate::currentDate();
+        QDate date{ QDate::currentDate() };
         date.setDate(date.year(), date.month(), 1);
         return date;
     }();
@@ -129,7 +131,7 @@ void DateRangeSelector::onThisMonthPresetClicked()
 void DateRangeSelector::onThisYearPresetClicked()
 {
     const QDate yearStartDate = [](){
-        QDate date = QDate::currentDate();
+        QDate date{ QDate::currentDate() };
         date.setDate(date.year(), 1, 1);
         return date;
     }();

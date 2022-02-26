@@ -14,12 +14,12 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
     categoryNameEdit = new QLineEdit;
     categoryNameEdit->setText(categoryName);
 
-    colorButton = new QPushButton("Color");
-    QPixmap pixmap(16, 16);
+    colorButton = new QPushButton{ "Color" };
+    QPixmap pixmap{ 16, 16 };
     pixmap.fill(categorySettings.chartColor);
     colorButton->setIcon(pixmap);
 
-    auto* deleteButton = new QPushButton("");
+    auto* deleteButton = new QPushButton{ "" };
     QIcon deleteButtonIcon("assets/delete.png");
     deleteButton->setIcon(deleteButtonIcon);
 
@@ -35,11 +35,11 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
 
 void CategorySettingsEdit::onColorButtonClicked()
 {
-    QColorDialog colorDialog(categorySettings.chartColor);
+    QColorDialog colorDialog{ categorySettings.chartColor };
     if(colorDialog.exec()) {
         categorySettings.chartColor = colorDialog.selectedColor();
 
-        QPixmap pixmap(16, 16);
+        QPixmap pixmap{ 16, 16 };
         pixmap.fill(categorySettings.chartColor);
         colorButton->setIcon(pixmap);
     }

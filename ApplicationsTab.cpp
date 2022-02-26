@@ -13,14 +13,14 @@ ApplicationsTab::ApplicationsTab(ApplicationsSettings& appsSettings, const Categ
     const QStringList categoriesList = [&categoriesSettings]() {
         QStringList list;
         list.append("");
-        for(auto it = categoriesSettings.constBegin(); it != categoriesSettings.constEnd(); ++it) {
+        for(auto it{ categoriesSettings.constBegin() }; it != categoriesSettings.constEnd(); ++it) {
             list.append(it.key());
         }
         return list;
     }();
 
-    for(auto it = appsSettings.begin(); it != appsSettings.end(); ++it) {
-        auto* appSettingsEdit = new ApplicationSettingsEdit(it.key(), it.value(), categoriesList);
+    for(auto it{ appsSettings.begin() }; it != appsSettings.end(); ++it) {
+        auto* appSettingsEdit = new ApplicationSettingsEdit{ it.key(), it.value(), categoriesList };
         appSettingsEdits.push_back(appSettingsEdit);
         editLayout->addWidget(appSettingsEdit);
     }
@@ -38,14 +38,14 @@ ApplicationsTab::ApplicationsTab(ApplicationsSettings& appsSettings, const Categ
 
 void ApplicationsTab::onCategoryAdded(const QString& categoryName)
 {
-    for(auto* appSettingsEdit : appSettingsEdits) {
+    for(ApplicationSettingsEdit* appSettingsEdit : appSettingsEdits) {
         appSettingsEdit->addCategory(categoryName);
     }
 }
 
 void ApplicationsTab::onCategoryRemoved(const QString& categoryName)
 {
-    for(auto* appSettingsEdit : appSettingsEdits) {
+    for(ApplicationSettingsEdit* appSettingsEdit : appSettingsEdits) {
         appSettingsEdit->removeCategory(categoryName);
     }
 }

@@ -11,14 +11,14 @@ SettingsDialog::SettingsDialog(ApplicationsSettings appsSettings, CategoriesSett
     , appsSettings(appsSettings)
     , categoriesSettings(categoriesSettings)
 {
-    categoriesTab = new CategoriesTab(this->categoriesSettings);
-    applicationsTab = new ApplicationsTab(this->appsSettings, this->categoriesSettings);
+    categoriesTab = new CategoriesTab{ this->categoriesSettings };
+    applicationsTab = new ApplicationsTab{ this->appsSettings, this->categoriesSettings };
 
     auto* tabWidget = new QTabWidget;
     tabWidget->addTab(applicationsTab, "Applications");
     tabWidget->addTab(categoriesTab, "Categories");
 
-    auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    auto* buttonBox = new QDialogButtonBox{ QDialogButtonBox::Ok | QDialogButtonBox::Cancel };
 
     auto* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
@@ -26,7 +26,7 @@ SettingsDialog::SettingsDialog(ApplicationsSettings appsSettings, CategoriesSett
     setLayout(mainLayout);
 
     setWindowTitle("Settings");
-    setFixedSize(450, 600);
+    setFixedSize(450, 600); // TODO: change it
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);

@@ -21,7 +21,7 @@ TimeTracker::~TimeTracker()
 
 void TimeTracker::update()
 {
-    const QString appName = TimeTracker::getCurrentApplicationName();
+    const QString appName{ TimeTracker::getCurrentApplicationName() };
     if (appName == currentAppName) {
         return;
     }
@@ -30,7 +30,7 @@ void TimeTracker::update()
         emit newAppTracked(appName);
     }
 
-    const QDateTime currentDateTime = QDateTime::currentDateTime();
+    const QDateTime currentDateTime{ QDateTime::currentDateTime() };
 
     if (currentAppName.isEmpty()) {
         currentAppName = appName;
@@ -38,11 +38,11 @@ void TimeTracker::update()
         return;
     }
 
-    if (auto it = appData.find(currentAppName); it != appData.end()) {
-        it.value().push_back(DateTimeRange(currentAppStartTime, currentDateTime));
+    if (auto it{ appData.find(currentAppName) }; it != appData.end()) {
+        it.value().push_back(DateTimeRange{ currentAppStartTime, currentDateTime });
     }
     else {
-        appData.insert(currentAppName, QVector<DateTimeRange>({DateTimeRange(currentAppStartTime, currentDateTime)}));
+        appData.insert(currentAppName, QVector<DateTimeRange>({ DateTimeRange{ currentAppStartTime, currentDateTime } }));
     }
 
     currentAppName = appName;
@@ -51,14 +51,13 @@ void TimeTracker::update()
 
 void TimeTracker::saveData()
 {
-    const QString fileName = "applicationsData";
-    QFile file(fileName);
+    QFile file{ "applicationsData" };
 
     if (!file.open(QIODevice::WriteOnly)) {
         return;
     }
 
-    QDataStream stream(&file);
+    QDataStream stream{ &file };
     stream.setVersion(QDataStream::Qt_6_2);
 
     // TEMPORARY
@@ -76,14 +75,13 @@ void TimeTracker::saveData()
 
 void TimeTracker::loadData()
 {
-    const QString fileName = "applicationsData";
-    QFile file(fileName);
+    QFile file{ "applicationsData" };
 
     if (!file.open(QIODevice::ReadOnly)) {
         return;
     }
 
-    QDataStream stream(&file);
+    QDataStream stream{ &file };
     stream.setVersion(QDataStream::Qt_6_2);
 
     stream >> appData;
@@ -94,11 +92,11 @@ void TimeTracker::loadData()
 TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const QDate &endDate) const
 {
     AppData data;
-    for(auto it = appData.constBegin(); it != appData.constEnd(); ++it) {
-        auto dateRangesIt = data.insert(it.key(), {});
-        for(auto dateRange : appData.value(it.key())) {
-            const QDate dateRangeBeginDate = dateRange.first.date();
-            const QDate dateRangeEndDate = dateRange.second.date();
+    for(auto it{ appData.constBegin() }; it != appData.constEnd(); ++it) {
+        auto dateRangesIt{ data.insert(it.key(), {}) };
+        for(DateTimeRange dateRange : appData.value(it.key())) {
+            const QDate dateRangeBeginDate{ dateRange.first.date() };
+            const QDate dateRangeEndDate{ dateRange.second.date() };
             if(dateRangeBeginDate >= beginDate && dateRangeEndDate <= endDate) {
                 dateRangesIt->push_back(std::move(dateRange));
             }
@@ -125,20 +123,20 @@ const TimeTracker::AppData& TimeTracker::getData() const
 
 QString TimeTracker::getCurrentApplicationName()
 {
-    QString appName = "Invalid";
+    QString appName{ "Invalid" };
 
     if constexpr(os == OS::Windows) {
-        HWND foreground = GetForegroundWindow();
+        HWND foreground{ GetForegroundWindow() };
         if(foreground){
             DWORD procId;
             GetWindowThreadProcessId(foreground, &procId);
             if(procId){
-                HANDLE handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, procId);
+                HANDLE handle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, procId) };
                 if(handle){
                     TCHAR buffer[256];
                     if(GetModuleFileNameEx(handle, 0, buffer, 256)){
-                        QString str = QString::fromWCharArray(buffer);
-                        const int idx = str.lastIndexOf('\\') + 1; // first char of the app name
+                        const QString str{ QString::fromWCharArray(buffer) };
+                        const int idx{ static_cast<int>(str.lastIndexOf('\\')) + 1 }; // first char of the app name
                         appName = str.mid(idx, str.lastIndexOf('.') - idx);
                     }
                 }
@@ -148,7 +146,7 @@ QString TimeTracker::getCurrentApplicationName()
     }
     else if constexpr(os == OS::Linux) {
         std::array<char, 128> buffer;
-        const char* cmd = "cat /proc/$(xdotool getwindowpid $(xdotool getwindowfocus))/comm";
+        const char* cmd{ "cat /proc/$(xdotool getwindowpid $(xdotool getwindowfocus))/comm" };
         std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
         if(pipe){
             while(fgets(buffer.data(), buffer.size(), pipe.get())){
