@@ -26,7 +26,7 @@ void TimeTracker::update()
         return;
     }
 
-    if(!appData.contains(appName)) {
+    if(!appData.contains(appName) && appName != "Invalid") {
         emit newAppTracked(appName);
     }
 
@@ -41,7 +41,7 @@ void TimeTracker::update()
     if (auto it{ appData.find(currentAppName) }; it != appData.end()) {
         it.value().push_back(DateTimeRange{ currentAppStartTime, currentDateTime });
     }
-    else {
+    else if(appName != "Invalid") {
         appData.insert(currentAppName, QVector<DateTimeRange>({ DateTimeRange{ currentAppStartTime, currentDateTime } }));
     }
 

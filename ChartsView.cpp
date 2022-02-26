@@ -267,6 +267,31 @@ void ChartsView::updateData()
         appData = std::move(newAppData);
     }
 
+    // Show only 'maxBarSets' count of apps
+    if(appData.size() > maxBarSets) {
+        // Count total sum of time for each app
+        QVector<QPair<QString, int>> totalSecondsPerApp;
+        for(auto it{ appData.constBegin() }; it != appData.constEnd(); ++it) {
+            totalSecondsPerApp.push_back({it.key(), 0});
+            for(const TimeTracker::DateTimeRange& dateRange : appData.value(it.key())) {
+                totalSecondsPerApp.last().second += dateRange.first.secsTo(dateRange.second);
+            }
+        }
+
+        // Sort in descending order
+        std::sort(totalSecondsPerApp.begin(), totalSecondsPerApp.end(), [](const auto& p1, const auto& p2) {
+           return p1.second > p2.second;
+        });
+
+        // Only include 'maxBarSets' count of apps with most time
+        TimeTracker::AppData newAppData;
+        for(int i{ 0 }; i < maxBarSets; ++i) {
+            const QString appName{ totalSecondsPerApp[i].first };
+            newAppData.insert(appName, appData.value(appName));
+        }
+        appData = std::move(newAppData);
+    }
+
     updateChart();
 }
 

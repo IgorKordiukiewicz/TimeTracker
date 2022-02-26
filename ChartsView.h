@@ -63,6 +63,7 @@ private:
     CategoriesSettings categoriesSettings;
 
     QColor activityChartColor{ QColor::fromHslF(0.55, 0.70, 0.55) };
+    int maxBarSets{ 5 };
 
     TimeTracker* timeTracker;
     TimeTracker::AppData appData;
