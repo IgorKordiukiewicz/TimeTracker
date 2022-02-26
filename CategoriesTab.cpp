@@ -60,6 +60,8 @@ void CategoriesTab::onNewCategoryButtonClicked()
         auto* scrollAreaWidget = new QWidget;
         scrollAreaWidget->setLayout(categoriesEditLayout);
         scrollArea->setWidget(scrollAreaWidget);
+
+        emit categoryAdded(categoryName);
     }
 }
 
@@ -70,4 +72,6 @@ void CategoriesTab::onDeleteCategory(CategorySettingsEdit* categorySettingsEdit,
     // Remove widget
     categoriesEditLayout->removeWidget(categorySettingsEdit);
     categorySettingsEdit->deleteLater();
+
+    emit categoryRemoved(categoryName);
 }

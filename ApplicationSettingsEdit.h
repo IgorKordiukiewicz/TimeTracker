@@ -6,16 +6,21 @@
 
 class QLineEdit;
 class QPushButton;
+class QComboBox;
 
 class ApplicationSettingsEdit : public QWidget
 {
     Q_OBJECT
 
 public:
-    ApplicationSettingsEdit(const QString& appName, ApplicationSettings& appSettings, QWidget* parent = nullptr);
+    ApplicationSettingsEdit(const QString& appName, ApplicationSettings& appSettings, const QStringList& categoriesList, QWidget* parent = nullptr);
+
+    void addCategory(const QString& categoryName);
+    void removeCategory(const QString& categoryName);
 
 private slots:
     void onAppDisplayNameEditChanged(const QString& text);
+    void onCategoryComboBoxCurrentTextChanged(const QString& text);
     void onColorButtonClicked();
 
 private:
@@ -23,6 +28,7 @@ private:
     ApplicationSettings& appSettings;
 
     QLineEdit* appDisplayNameEdit;
+    QComboBox* categoriesComboBox;
     QPushButton* colorButton;
 };
 

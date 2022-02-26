@@ -4,15 +4,22 @@
 #include <QWidget>
 #include "Settings.h"
 
+class ApplicationSettingsEdit;
+
 class ApplicationsTab : public QWidget
 {
     Q_OBJECT
 
 public:
-    ApplicationsTab(ApplicationsSettings& appsSettings, QWidget* parent = nullptr);
+    ApplicationsTab(ApplicationsSettings& appsSettings, const CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
+
+public slots:
+    void onCategoryAdded(const QString& categoryName);
+    void onCategoryRemoved(const QString& categoryName);
 
 private:
     ApplicationsSettings& appsSettings;
+    QVector<ApplicationSettingsEdit*> appSettingsEdits;
 };
 
 #endif // APPLICATIONSTAB_H

@@ -16,6 +16,10 @@ class CategoriesTab : public QWidget
 public:
     CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
 
+signals:
+    void categoryAdded(const QString& categoryName);
+    void categoryRemoved(const QString& categoryName);
+
 private slots:
     void onNewCategoryButtonClicked();
     void onDeleteCategory(CategorySettingsEdit* categorySettingsEdit, const QString& categoryName);

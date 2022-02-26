@@ -10,7 +10,7 @@ SettingsDialog::SettingsDialog(ApplicationsSettings& appsSettings, CategoriesSet
     : QDialog(parent)
 {
     categoriesTab = new CategoriesTab(categoriesSettings);
-    applicationsTab = new ApplicationsTab(appsSettings);
+    applicationsTab = new ApplicationsTab(appsSettings, categoriesSettings);
 
     auto* tabWidget = new QTabWidget;
     tabWidget->addTab(applicationsTab, "Applications");
@@ -27,4 +27,6 @@ SettingsDialog::SettingsDialog(ApplicationsSettings& appsSettings, CategoriesSet
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(categoriesTab, &CategoriesTab::categoryAdded, applicationsTab, &ApplicationsTab::onCategoryAdded);
+    connect(categoriesTab, &CategoriesTab::categoryRemoved, applicationsTab, &ApplicationsTab::onCategoryRemoved);
 }
