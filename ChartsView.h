@@ -24,6 +24,7 @@ public:
 private slots:
     void onGroupByComboBoxTextChanged(const QString& text);
     void onChartDataTypeComboBoxTextChanged(const QString& text);
+    void onRefreshButtonClicked();
     void onSettingsButtonClicked();
     void onNewAppTracked(const QString& appName);
     void onBarSetHovered(bool status, int, QBarSet* barSet);

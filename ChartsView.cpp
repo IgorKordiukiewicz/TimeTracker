@@ -29,6 +29,11 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     chartView = new QChartView{ chart };
     chartView->setRenderHint(QPainter::Antialiasing);
 
+    auto* chartDataTypeComboBox = new QComboBox;
+    chartDataTypeComboBox->addItem("Applications");
+    chartDataTypeComboBox->addItem("Categories");
+    chartDataTypeComboBox->addItem("Activity");
+
     auto* groupByLabel = new QLabel{ "Group by:" };
 
     auto* groupByComboBox = new QComboBox;
@@ -39,11 +44,7 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     groupByComboBox->addItem("Month");
     groupByComboBox->addItem("Year");
 
-    auto* chartDataTypeComboBox = new QComboBox;
-    chartDataTypeComboBox->addItem("Applications");
-    chartDataTypeComboBox->addItem("Categories");
-    chartDataTypeComboBox->addItem("Activity");
-
+    auto* refreshButton = new QPushButton{ "Refresh" };
     auto* settingsButton = new QPushButton{ "Settings" };
 
     auto* optionsLayout = new QHBoxLayout;
@@ -51,6 +52,7 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     optionsLayout->addWidget(chartDataTypeComboBox);
     optionsLayout->addWidget(groupByLabel);
     optionsLayout->addWidget(groupByComboBox);
+    optionsLayout->addWidget(refreshButton);
     optionsLayout->addWidget(settingsButton);
 
     auto* mainLayout = new QVBoxLayout;
@@ -60,6 +62,7 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
 
     connect(groupByComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onGroupByComboBoxTextChanged);
     connect(chartDataTypeComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onChartDataTypeComboBoxTextChanged);
+    connect(refreshButton, &QPushButton::clicked, this, &ChartsView::onRefreshButtonClicked);
     connect(settingsButton, &QPushButton::clicked, this, &ChartsView::onSettingsButtonClicked);
     connect(timeTracker, &TimeTracker::newAppTracked, this, &ChartsView::onNewAppTracked);
 }
@@ -135,6 +138,11 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
         chartDataType = newChartDataType;
         updateData();
     }
+}
+
+void ChartsView::onRefreshButtonClicked()
+{
+    updateData();
 }
 
 void ChartsView::onSettingsButtonClicked()
