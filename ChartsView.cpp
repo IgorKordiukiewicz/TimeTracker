@@ -44,6 +44,11 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     groupByComboBox->addItem("Month");
     groupByComboBox->addItem("Year");
 
+    auto* chartTypeLabel = new QLabel{ "Chart type:" };
+    auto* chartTypeComboBox = new QComboBox;
+    chartTypeComboBox->addItem("Bar");
+    chartTypeComboBox->addItem("Line");
+
     auto* refreshButton = new QPushButton{ "Refresh" };
     auto* settingsButton = new QPushButton{ "Settings" };
 
@@ -52,6 +57,8 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
     optionsLayout->addWidget(chartDataTypeComboBox);
     optionsLayout->addWidget(groupByLabel);
     optionsLayout->addWidget(groupByComboBox);
+    optionsLayout->addWidget(chartTypeLabel);
+    optionsLayout->addWidget(chartTypeComboBox);
     optionsLayout->addWidget(refreshButton);
     optionsLayout->addWidget(settingsButton);
 
@@ -62,6 +69,7 @@ ChartsView::ChartsView(TimeTracker* timeTracker, QWidget* parent)
 
     connect(groupByComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onGroupByComboBoxTextChanged);
     connect(chartDataTypeComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onChartDataTypeComboBoxTextChanged);
+    connect(chartTypeComboBox, &QComboBox::currentTextChanged, this, &ChartsView::onChartTypeComboBoxTextChanged);
     connect(refreshButton, &QPushButton::clicked, this, &ChartsView::onRefreshButtonClicked);
     connect(settingsButton, &QPushButton::clicked, this, &ChartsView::onSettingsButtonClicked);
     connect(timeTracker, &TimeTracker::newAppTracked, this, &ChartsView::onNewAppTracked);
@@ -136,6 +144,18 @@ void ChartsView::onChartDataTypeComboBoxTextChanged(const QString& text)
 
     if(newChartDataType != chartDataType) {
         chartDataType = newChartDataType;
+        updateData();
+    }
+}
+
+void ChartsView::onChartTypeComboBoxTextChanged(const QString& text)
+{
+    if(text == "Bar" && chartType == ChartType::Line) {
+        chartType = ChartType::Bar;
+        updateData();
+    }
+    else if(text == "Line" && chartType == ChartType::Bar) {
+        chartType = ChartType::Line;
         updateData();
     }
 }
@@ -222,8 +242,16 @@ void ChartsView::updateData()
         appData = std::move(newAppData);
     }
 
-    // Show only 'maxBarSets' count of apps
-    if(appData.size() > maxBarSets) {
+    // Calculate how many apps or categories should be shown at most depending on current chart type selected
+    const int maxAppOrCategoryCount = [this](){
+        if(chartType == ChartType::Line) {
+            return maxLinesSeries;
+        }
+        else {
+            return maxBarSets;
+        }
+    }();
+    if(appData.size() > maxAppOrCategoryCount) {
         // Count total sum of time for each app
         QVector<QPair<QString, int>> totalSecondsPerApp;
         for(auto it{ appData.constBegin() }; it != appData.constEnd(); ++it) {
@@ -240,7 +268,7 @@ void ChartsView::updateData()
 
         // Only include 'maxBarSets' count of apps with most time
         TimeTracker::AppData newAppData;
-        for(int i{ 0 }; i < maxBarSets; ++i) {
+        for(int i{ 0 }; i < maxAppOrCategoryCount; ++i) {
             const QString appName{ totalSecondsPerApp[i].first };
             newAppData.insert(appName, appData.value(appName));
         }
@@ -309,6 +337,9 @@ void ChartsView::updateChart()
 
     float maxTime{ 0.f };
     auto* barSeries = new QBarSeries;
+    barSeries->setVisible(chartType == ChartType::Bar);
+    QVector<QLineSeries*> linesSeries;
+
     auto it{ appData.constBegin() };
     while(it != appData.constEnd()) {
         // Get the bar chart name and color
@@ -339,6 +370,14 @@ void ChartsView::updateChart()
         barSet->setColor(color);
         barSet->setLabelColor(Qt::transparent); // labels should be initially invisible
 
+        auto* lineSeries = new QLineSeries;
+        lineSeries->setName(name);
+        lineSeries->setVisible(chartType == ChartType::Line);
+        lineSeries->setColor(color);
+        QPen pen = lineSeries->pen();
+        pen.setWidth(lineSeriesWidth);
+        lineSeries->setPen(pen);
+
         if(groupBy == GroupBy::None) {
             int seconds{ 0 };
             for(const TimeTracker::DateTimeRange& dateRange : appData.value(it.key())) {
@@ -347,7 +386,6 @@ void ChartsView::updateChart()
             const float hours{ static_cast<float>(seconds) / 3600.f };
             maxTime = qMax(maxTime, hours);
             barSet->append(hours);
-            //barSet->setLabel(Utils::getTimeAsString(seconds));
         }
         else {
             const QVector<TimeTracker::DateTimeRange> dateRanges{ appData.value(it.key()) };
@@ -383,11 +421,12 @@ void ChartsView::updateChart()
                 const float hours{ static_cast<float>(seconds) / 3600.f };
                 maxTime = qMax(maxTime, hours);
                 barSet->append(hours);
-                //barSet->setLabel(Utils::getTimeAsString(seconds));
+                lineSeries->append(i, hours);
             }
         }
 
         barSeries->append(barSet);
+        linesSeries.push_back(lineSeries);
         ++it;
     }
 
@@ -399,9 +438,13 @@ void ChartsView::updateChart()
 
     // Initialize chart
     chart = new QChart;
+    for(auto* lineSeries : linesSeries) {
+        chart->addSeries(lineSeries);
+    }
     chart->addSeries(barSeries);
     chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addAxis(yAxis, Qt::AlignLeft);
+
     barSeries->attachAxis(xAxis);
     barSeries->attachAxis(yAxis);
     barSeries->setLabelsFormat("@value h");

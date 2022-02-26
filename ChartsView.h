@@ -24,6 +24,7 @@ public:
 private slots:
     void onGroupByComboBoxTextChanged(const QString& text);
     void onChartDataTypeComboBoxTextChanged(const QString& text);
+    void onChartTypeComboBoxTextChanged(const QString& text);
     void onRefreshButtonClicked();
     void onSettingsButtonClicked();
     void onNewAppTracked(const QString& appName);
@@ -50,6 +51,12 @@ private:
         Year
     } groupBy{ GroupBy::None };
 
+    enum class ChartType
+    {
+        Bar,
+        Line
+    } chartType{ ChartType::Bar };
+
     QHash<QString, GroupBy> groupByNames{
         {"None", GroupBy::None},
         {"Day", GroupBy::Day},
@@ -61,8 +68,10 @@ private:
     ApplicationsSettings appsSettings;
     CategoriesSettings categoriesSettings;
 
-    QColor activityChartColor{ QColor::fromHslF(0.55, 0.70, 0.55) };
+    QColor activityChartColor{ QColor::fromHslF(0.55f, 0.70f, 0.55f) };
     int maxBarSets{ 5 };
+    int maxLinesSeries{ 10 };
+    int lineSeriesWidth{ 2 };
 
     TimeTracker* timeTracker;
     TimeTracker::AppData appData;
