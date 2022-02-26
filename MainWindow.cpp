@@ -8,6 +8,10 @@
 #include "ChartsView.h"
 #include <QPushButton>
 #include <QFrame>
+#include <QSystemTrayIcon>
+#include <QAction>
+#include <QCloseEvent>
+#include <QDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,11 +35,36 @@ MainWindow::MainWindow(QWidget *parent)
     layoutWidget->setLayout(mainLayout);
     setCentralWidget(layoutWidget);
 
+    minimizeAction = new QAction{ "Minimize", this };
+    maximizeAction = new QAction{ "Maximize", this };
+    restoreAction = new QAction{ "Restore", this };
+    quitAction = new QAction{ "Quit", this };
+
+    auto* trayIconMenu = new QMenu{ this };
+    trayIconMenu->addAction(minimizeAction);
+    trayIconMenu->addAction(maximizeAction);
+    trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(quitAction);
+
+    trayIcon = new QSystemTrayIcon{ this };
+    trayIcon->setContextMenu(trayIconMenu);
+    // TODO: create a real icon
+    QPixmap pixmap(32, 32);
+    pixmap.fill(Qt::red);
+    trayIcon->setIcon(pixmap);
+    trayIcon->show();
+
     auto* timer = new QTimer{ this };
     timer->start(1000);
 
     connect(timer, &QTimer::timeout, this, &MainWindow::updateTimeTracker);
     connect(dateRangeSelector, &DateRangeSelector::dateChanged, this, &MainWindow::onDateRangeChanged);
+    connect(minimizeAction, &QAction::triggered, this, &QWidget::hide);
+    connect(maximizeAction, &QAction::triggered, this, &QWidget::showMaximized);
+    connect(restoreAction, &QAction::triggered, this, &QWidget::showNormal);
+    connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onTrayIconActivated);
 
     timeTracker.loadData();
     chartsView->loadSettings();
@@ -47,6 +76,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setVisible(bool visible)
+{
+    minimizeAction->setEnabled(visible);
+    maximizeAction->setEnabled(!isMaximized());
+    restoreAction->setEnabled(isMaximized() || !visible);
+    QMainWindow::setVisible(visible);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    if(trayIcon->isVisible()) {
+        hide();
+        event->ignore();
+    }
+}
+
 void MainWindow::updateTimeTracker()
 {
     timeTracker.update();
@@ -55,6 +100,18 @@ void MainWindow::updateTimeTracker()
 void MainWindow::onDateRangeChanged(QDate beginDate, QDate endDate)
 {
     chartsView->setDateRange(beginDate, endDate);
+}
+
+void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch(reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+        show();
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::printData()
