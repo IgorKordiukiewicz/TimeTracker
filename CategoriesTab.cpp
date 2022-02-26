@@ -17,7 +17,6 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
     categoriesEditLayout = new QVBoxLayout(this);
     categoriesEditLayout->setAlignment(Qt::AlignTop);
 
-
     for(auto it = categoriesSettings.begin(); it != categoriesSettings.end(); ++it) {
         auto categorySettingsEdit = new CategorySettingsEdit(it.key(), it.value());
         categoriesEditLayout->addWidget(categorySettingsEdit);
@@ -30,6 +29,7 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
 
     auto* scrollAreaWidget = new QWidget;
     scrollAreaWidget->setLayout(categoriesEditLayout);
+    scrollAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     scrollArea = new QScrollArea;
     scrollArea->setWidget(scrollAreaWidget);
 

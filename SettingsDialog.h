@@ -12,11 +12,17 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    SettingsDialog(ApplicationsSettings& appsSettings, CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
+    SettingsDialog(ApplicationsSettings appsSettings, CategoriesSettings categoriesSettings, QWidget* parent = nullptr);
+
+    const ApplicationsSettings& getAppsSettings() const;
+    const CategoriesSettings& getCategoriesSettings() const;
 
 private:
     CategoriesTab* categoriesTab;
     ApplicationsTab* applicationsTab;
+
+    ApplicationsSettings appsSettings;
+    CategoriesSettings categoriesSettings;
 };
 
 #endif // SETTINGSDIALOG_H

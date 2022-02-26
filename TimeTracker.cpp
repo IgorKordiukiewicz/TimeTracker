@@ -51,7 +51,7 @@ void TimeTracker::update()
 
 void TimeTracker::saveData()
 {
-    const QString fileName = "data.txt";
+    const QString fileName = "applicationsData";
     QFile file(fileName);
 
     if (!file.open(QIODevice::WriteOnly)) {
@@ -76,7 +76,7 @@ void TimeTracker::saveData()
 
 void TimeTracker::loadData()
 {
-    const QString fileName = "data.txt";
+    const QString fileName = "applicationsData";
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly)) {

@@ -209,6 +209,9 @@ void ChartsView::onSettingsButtonClicked()
 {
     SettingsDialog settingsDialog(appsSettings, categoriesSettings);
     if(settingsDialog.exec()) {
+        // appsSettings and categoriesSettings are updated only if user confirmed changes made in settings dialog
+        appsSettings = settingsDialog.getAppsSettings();
+        categoriesSettings = settingsDialog.getCategoriesSettings();
         updateData();
     }
 }
