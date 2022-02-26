@@ -19,12 +19,10 @@ ApplicationsTab::ApplicationsTab(ApplicationsSettings& appsSettings, const Categ
         return list;
     }();
 
-    auto it = appsSettings.begin();
-    while(it != appsSettings.end()) {
+    for(auto it = appsSettings.begin(); it != appsSettings.end(); ++it) {
         auto* appSettingsEdit = new ApplicationSettingsEdit(it.key(), it.value(), categoriesList);
         appSettingsEdits.push_back(appSettingsEdit);
         editLayout->addWidget(appSettingsEdit);
-        ++it;
     }
 
     auto* scrollAreaWidget = new QWidget;

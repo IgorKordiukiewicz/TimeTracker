@@ -17,12 +17,11 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
     categoriesEditLayout = new QVBoxLayout(this);
     categoriesEditLayout->setAlignment(Qt::AlignTop);
 
-    auto it = categoriesSettings.begin();
-    while(it != categoriesSettings.end()) {
+
+    for(auto it = categoriesSettings.begin(); it != categoriesSettings.end(); ++it) {
         auto categorySettingsEdit = new CategorySettingsEdit(it.key(), it.value());
         categoriesEditLayout->addWidget(categorySettingsEdit);
         connect(categorySettingsEdit, &CategorySettingsEdit::deleteCategory, this, &CategoriesTab::onDeleteCategory);
-        ++it;
     }
 
     auto* newCategoryLayout = new QHBoxLayout;

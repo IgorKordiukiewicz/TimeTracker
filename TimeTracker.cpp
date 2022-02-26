@@ -94,8 +94,7 @@ void TimeTracker::loadData()
 TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const QDate &endDate) const
 {
     AppData data;
-    auto it = appData.constBegin();
-    while(it != appData.constEnd()) {
+    for(auto it = appData.constBegin(); it != appData.constEnd(); ++it) {
         auto dateRangesIt = data.insert(it.key(), {});
         for(auto dateRange : appData.value(it.key())) {
             const QDate dateRangeBeginDate = dateRange.first.date();
@@ -114,7 +113,6 @@ TimeTracker::AppData TimeTracker::getDataInRange(const QDate &beginDate, const Q
                 dateRangesIt->push_back(std::move(dateRange));
             }
         }
-        ++it;
     }
 
     return data;

@@ -136,6 +136,7 @@ void ChartsView::loadAppsSettings()
     stream >> appsSettings;
     file.close();
 
+    // Update apps settings if it is not complete (probably should never happen outside of debugging after data file is reset, TODO: remove later?)
     const auto& appNames = timeTracker->getData().keys();
     for(const auto& appName : appNames) {
         if(!appsSettings.contains(appName)) {
@@ -253,12 +254,10 @@ void ChartsView::updateData()
         // Merge all apps date time ranges into one
         TimeTracker::AppData newAppData;
         auto dateRangesIt = newAppData.insert("Activity", QVector<TimeTracker::DateTimeRange>());
-        auto it = appData.constBegin();
-        while(it != appData.constEnd()) {
+        for(auto it = appData.constBegin(); it != appData.constEnd(); ++it) {
             for(auto dateRange : appData.value(it.key())) {
                 dateRangesIt->push_back(std::move(dateRange));
             }
-            ++it;
         }
 
         // Date ranges have to be sorted in increasing order to work properly
