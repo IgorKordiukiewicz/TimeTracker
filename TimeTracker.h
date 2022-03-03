@@ -26,9 +26,6 @@ public:
 
     static QString getCurrentApplicationName();
 
-    // temporary
-    void print();
-
 signals:
     void newAppTracked(const QString& appName);
 

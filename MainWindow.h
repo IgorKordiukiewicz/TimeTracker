@@ -32,7 +32,6 @@ private slots:
     void updateTimeTracker();
     void onDateRangeChanged(QDate beginDate, QDate endDate);
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
-    void printData();
 
 private:
     TimeTracker timeTracker;

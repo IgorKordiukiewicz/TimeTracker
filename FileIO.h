@@ -3,7 +3,6 @@
 
 #include <QFile>
 #include <QString>
-#include <QDebug>
 
 namespace FileIO
 {
@@ -12,7 +11,6 @@ namespace FileIO
     {
         QFile file{ fileName };
         if (!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "Failed to open file: " << fileName << " for reading";
             return;
         }
 
@@ -28,7 +26,6 @@ namespace FileIO
     {
         QFile file{ fileName };
         if(!file.open(QIODevice::WriteOnly)) {
-            qDebug() << "Failed to open file: " << fileName << " for writing";
             return;
         }
 
@@ -36,7 +33,6 @@ namespace FileIO
         stream.setVersion(QDataStream::Qt_6_2);
         stream << data;
 
-        file.flush();
         file.close();
     }
 }

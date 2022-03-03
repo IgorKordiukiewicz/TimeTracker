@@ -82,27 +82,14 @@ ChartsView::~ChartsView()
 
 void ChartsView::saveSettings()
 {
-    // TEMPORARY, TODO: REMOVE
-    ApplicationsSettings appsSettingsTEMP;
-    appsSettingsTEMP.insert("App 1", ApplicationSettings{"App 1", "", QColor(200, 0, 0)});
-    appsSettingsTEMP.insert("App 2", ApplicationSettings{"App 2", "", QColor(0, 200, 0)});
-
     FileIO::save("categoriesSettings", categoriesSettings);
-    FileIO::save("appSettings", appsSettingsTEMP);
+    FileIO::save("appSettings", appsSettings);
 }
 
 void ChartsView::loadSettings()
 {
     FileIO::load("categoriesSettings", categoriesSettings);
     FileIO::load("appSettings", appsSettings);
-
-    // Update apps settings if it is not complete (probably should never happen outside of debugging after data file is reset, TODO: remove later?)
-    const auto& appNames{ timeTracker->getData().keys() };
-    for(const QString& appName : appNames) {
-        if(!appsSettings.contains(appName)) {
-            onNewAppTracked(appName);
-        }
-    }
 }
 
 void ChartsView::setDateRange(const QDate& beginDate, const QDate& endDate)

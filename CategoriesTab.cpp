@@ -29,6 +29,7 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
 
     auto* scrollAreaWidget = new QWidget;
     scrollAreaWidget->setLayout(categoriesEditLayout);
+    scrollAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea = new QScrollArea;
     scrollArea->setWidget(scrollAreaWidget);
 

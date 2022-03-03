@@ -114,8 +114,3 @@ void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void MainWindow::printData()
-{
-    timeTracker.print();
-}
-

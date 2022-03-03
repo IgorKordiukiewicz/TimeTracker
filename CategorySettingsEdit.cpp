@@ -13,6 +13,7 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
 {
     categoryNameEdit = new QLineEdit;
     categoryNameEdit->setText(categoryName);
+    categoryNameEdit->setFixedWidth(250);
 
     colorButton = new QPushButton{ "Color" };
     QPixmap pixmap{ 16, 16 };

@@ -26,7 +26,7 @@ SettingsDialog::SettingsDialog(ApplicationsSettings appsSettings, CategoriesSett
     setLayout(mainLayout);
 
     setWindowTitle("Settings");
-    setFixedSize(450, 600); // TODO: change it
+    setFixedSize(450, 600);
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);

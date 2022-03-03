@@ -45,7 +45,7 @@ set(PROJECT_SOURCES
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     if(WIN32)
-        qt_add_executable(TimeTracker MANUAL_FINALIZATION ${PROJECT_SOURCES} "resources/icon.rc")
+        qt_add_executable(TimeTracker WIN32 MANUAL_FINALIZATION ${PROJECT_SOURCES} "resources/icon.rc")
     else()
         qt_add_executable(TimeTracker MANUAL_FINALIZATION ${PROJECT_SOURCES})
     endif()

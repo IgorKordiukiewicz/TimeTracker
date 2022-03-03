@@ -52,16 +52,7 @@ void TimeTracker::update()
 
 void TimeTracker::saveData()
 {
-    // TEMPORARY, TODO: REMOVE
-    auto appDataT{ appData };
-    appDataT.clear();
-    appDataT.insert("App 1", QVector<TimeTracker::DateTimeRange>({TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(12, 20)), QDateTime(QDate(2022, 2, 23), QTime(12, 30)))
-                                                    , TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 23), QTime(23, 55)), QDateTime(QDate(2022, 2, 24), QTime(0, 5)))
-                                                    , TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 30)), QDateTime(QDate(2022, 2, 24), QTime(14, 35)))}));
-    appDataT.insert("App 2", QVector<TimeTracker::DateTimeRange>({TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 16), QTime(14, 42)), QDateTime(QDate(2022, 2, 16), QTime(14, 47))),
-                                                       TimeTracker::DateTimeRange(QDateTime(QDate(2022, 2, 24), QTime(14, 42)), QDateTime(QDate(2022, 2, 24), QTime(14, 47)))}));
-
-    FileIO::save("applicationsData", appDataT);
+    FileIO::save("applicationsData", appData);
 }
 
 void TimeTracker::loadData()
@@ -136,14 +127,4 @@ QString TimeTracker::getCurrentApplicationName()
     }
 
     return appName;
-}
-
-void TimeTracker::print()
-{
-    for(auto key : appData.keys()) {
-        qDebug() << key << '\n';
-        for(auto& V : appData.value(key)){
-            qDebug() << V.first << " " << V.second << '\n';
-        }
-    }
 }
