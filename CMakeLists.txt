@@ -44,10 +44,11 @@ set(PROJECT_SOURCES
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(TimeTracker
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
+    if(WIN32)
+        qt_add_executable(TimeTracker MANUAL_FINALIZATION ${PROJECT_SOURCES} "resources/icon.rc")
+    else()
+        qt_add_executable(TimeTracker MANUAL_FINALIZATION ${PROJECT_SOURCES})
+    endif()
 endif()
 
 target_link_libraries(TimeTracker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

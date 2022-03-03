@@ -20,7 +20,7 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
     colorButton->setIcon(pixmap);
 
     auto* deleteButton = new QPushButton{ "" };
-    QIcon deleteButtonIcon("assets/delete.png");
+    QIcon deleteButtonIcon("resources/delete.png");
     deleteButton->setIcon(deleteButtonIcon);
 
     auto* mainLayout = new QHBoxLayout;

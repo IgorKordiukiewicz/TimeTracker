@@ -49,10 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     trayIcon = new QSystemTrayIcon{ this };
     trayIcon->setContextMenu(trayIconMenu);
-    // TODO: create a real icon
-    QPixmap pixmap(32, 32);
-    pixmap.fill(Qt::red);
-    trayIcon->setIcon(pixmap);
+    trayIcon->setIcon(QIcon{ "resources/icon.ico" });
     trayIcon->show();
 
     auto* timer = new QTimer{ this };
@@ -69,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent)
     timeTracker.loadData();
     chartsView->loadSettings();
     chartsView->setDateRange(dateRangeSelector->getBeginDate(), dateRangeSelector->getEndDate());
+
+    setWindowTitle("Time Tracker");
+    resize(1600, 900);
 }
 
 MainWindow::~MainWindow()
