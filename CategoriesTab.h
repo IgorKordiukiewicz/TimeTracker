@@ -16,6 +16,8 @@ class CategoriesTab : public QWidget
 public:
     CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
 
+    void applyChanges();
+
 signals:
     void categoryAdded(const QString& categoryName);
     void categoryRemoved(const QString& categoryName);
@@ -30,6 +32,7 @@ private:
     QScrollArea* scrollArea;
 
     CategoriesSettings& categoriesSettings;
+    QVector<CategorySettingsEdit*> categorySettingsEdits;
 };
 
 #endif // CATEGORIESTAB_H

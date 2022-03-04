@@ -4,8 +4,8 @@
 #include <QWidget>
 #include "Settings.h"
 
-class QLineEdit;
 class QPushButton;
+class QLabel;
 
 class CategorySettingsEdit : public QWidget
 {
@@ -13,6 +13,8 @@ class CategorySettingsEdit : public QWidget
 
 public:
     CategorySettingsEdit(const QString& categoryName, CategorySettings& categorySettings, QWidget* parent = nullptr);
+
+    void applyChanges();
 
 signals:
     void deleteCategory(CategorySettingsEdit* categorySettingsEdit, const QString& categoryName);
@@ -25,7 +27,9 @@ private:
     QString categoryName;
     CategorySettings& categorySettings;
 
-    QLineEdit* categoryNameEdit;
+    QColor selectedColor;
+
+    QLabel* categoryNameLabel;
     QPushButton* colorButton;
 };
 

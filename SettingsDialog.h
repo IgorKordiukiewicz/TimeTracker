@@ -17,6 +17,9 @@ public:
     const ApplicationsSettings& getAppsSettings() const;
     const CategoriesSettings& getCategoriesSettings() const;
 
+private slots:
+    virtual void accept() override;
+
 private:
     CategoriesTab* categoriesTab;
     ApplicationsTab* applicationsTab;

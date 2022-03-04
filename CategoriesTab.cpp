@@ -20,6 +20,7 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
     for(auto it{ categoriesSettings.begin() }; it != categoriesSettings.end(); ++it) {
         auto categorySettingsEdit = new CategorySettingsEdit{ it.key(), it.value() };
         categoriesEditLayout->addWidget(categorySettingsEdit);
+        categorySettingsEdits.push_back(categorySettingsEdit);
         connect(categorySettingsEdit, &CategorySettingsEdit::deleteCategory, this, &CategoriesTab::onDeleteCategory);
     }
 
@@ -39,6 +40,13 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
     setLayout(mainLayout);
 
     connect(newCategoryButton, &QPushButton::clicked, this, &CategoriesTab::onNewCategoryButtonClicked);
+}
+
+void CategoriesTab::applyChanges()
+{
+    for(CategorySettingsEdit* categorySettingsEdit : categorySettingsEdits) {
+        categorySettingsEdit->applyChanges();
+    }
 }
 
 void CategoriesTab::onNewCategoryButtonClicked()

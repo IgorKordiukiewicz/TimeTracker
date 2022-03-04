@@ -23,8 +23,9 @@ ApplicationSettingsEdit::ApplicationSettingsEdit(const QString& appName, Applica
     categoriesComboBox->setCurrentText(appSettings.categoryName);
 
     colorButton = new QPushButton{ "Color" };
+    selectedColor = appSettings.chartColor;
     QPixmap pixmap{ 16, 16 };
-    pixmap.fill(appSettings.chartColor);
+    pixmap.fill(selectedColor);
     colorButton->setIcon(pixmap);
 
     auto* mainLayout = new QHBoxLayout;
@@ -34,8 +35,6 @@ ApplicationSettingsEdit::ApplicationSettingsEdit(const QString& appName, Applica
     mainLayout->addWidget(colorButton);
     setLayout(mainLayout);
 
-    connect(appDisplayNameEdit, &QLineEdit::textChanged, this, &ApplicationSettingsEdit::onAppDisplayNameEditChanged);
-    connect(categoriesComboBox, &QComboBox::currentTextChanged, this, &ApplicationSettingsEdit::onCategoryComboBoxCurrentTextChanged);
     connect(colorButton, &QPushButton::clicked, this, &ApplicationSettingsEdit::onColorButtonClicked);
 }
 
@@ -55,29 +54,23 @@ void ApplicationSettingsEdit::removeCategory(const QString &categoryName)
     }
 }
 
-void ApplicationSettingsEdit::onAppDisplayNameEditChanged(const QString& text)
+void ApplicationSettingsEdit::applyChanges()
 {
-    if(text.isEmpty()) {
-        appDisplayNameEdit->setText(appName);
-        return;
+    if(const QString displayName = appDisplayNameEdit->text(); !displayName.isEmpty()) {
+        appSettings.displayName = displayName;
     }
-
-    appSettings.displayName = text;
-}
-
-void ApplicationSettingsEdit::onCategoryComboBoxCurrentTextChanged(const QString& text)
-{
-    appSettings.categoryName = text;
+    appSettings.categoryName = categoriesComboBox->currentText();
+    appSettings.chartColor = selectedColor;
 }
 
 void ApplicationSettingsEdit::onColorButtonClicked()
 {
-    QColorDialog colorDialog{ appSettings.chartColor };
+    QColorDialog colorDialog{ selectedColor };
     if(colorDialog.exec()) {
-        appSettings.chartColor = colorDialog.selectedColor();
+        selectedColor = colorDialog.selectedColor();
 
         QPixmap pixmap{ 16, 16 };
-        pixmap.fill(appSettings.chartColor);
+        pixmap.fill(selectedColor);
         colorButton->setIcon(pixmap);
     }
 }

@@ -36,6 +36,13 @@ ApplicationsTab::ApplicationsTab(ApplicationsSettings& appsSettings, const Categ
     setLayout(mainLayout);
 }
 
+void ApplicationsTab::applyChanges()
+{
+    for(ApplicationSettingsEdit* appSettingsEdit : appSettingsEdits) {
+        appSettingsEdit->applyChanges();
+    }
+}
+
 void ApplicationsTab::onCategoryAdded(const QString& categoryName)
 {
     for(ApplicationSettingsEdit* appSettingsEdit : appSettingsEdits) {

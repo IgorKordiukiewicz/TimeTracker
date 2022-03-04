@@ -5,19 +5,20 @@
 #include <QPushButton>
 #include <QPixmap>
 #include <QImageReader>
+#include <QLabel>
 
 CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, CategorySettings& categorySettings, QWidget* parent)
     : QWidget(parent)
     , categoryName(categoryName)
     , categorySettings(categorySettings)
 {
-    categoryNameEdit = new QLineEdit;
-    categoryNameEdit->setText(categoryName);
-    categoryNameEdit->setFixedWidth(250);
+    categoryNameLabel = new QLabel(categoryName);
+    categoryNameLabel->setFixedWidth(250);
 
     colorButton = new QPushButton{ "Color" };
+    selectedColor = categorySettings.chartColor;
     QPixmap pixmap{ 16, 16 };
-    pixmap.fill(categorySettings.chartColor);
+    pixmap.fill(selectedColor);
     colorButton->setIcon(pixmap);
 
     auto* deleteButton = new QPushButton{ "" };
@@ -25,7 +26,7 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
     deleteButton->setIcon(deleteButtonIcon);
 
     auto* mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(categoryNameEdit);
+    mainLayout->addWidget(categoryNameLabel);
     mainLayout->addWidget(colorButton);
     mainLayout->addWidget(deleteButton);
     setLayout(mainLayout);
@@ -34,14 +35,19 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
     connect(deleteButton, &QPushButton::clicked, this, &CategorySettingsEdit::onDeleteButtonClicked);
 }
 
+void CategorySettingsEdit::applyChanges()
+{
+    categorySettings.chartColor = selectedColor;
+}
+
 void CategorySettingsEdit::onColorButtonClicked()
 {
     QColorDialog colorDialog{ categorySettings.chartColor };
     if(colorDialog.exec()) {
-        categorySettings.chartColor = colorDialog.selectedColor();
+        selectedColor = colorDialog.selectedColor();
 
         QPixmap pixmap{ 16, 16 };
-        pixmap.fill(categorySettings.chartColor);
+        pixmap.fill(selectedColor);
         colorButton->setIcon(pixmap);
     }
 }

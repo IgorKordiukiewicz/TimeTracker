@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include "ApplicationsTab.h"
+#include <QDebug>
 
 SettingsDialog::SettingsDialog(ApplicationsSettings appsSettings, CategoriesSettings categoriesSettings, QWidget* parent)
     : QDialog(parent)
@@ -42,4 +43,11 @@ const ApplicationsSettings& SettingsDialog::getAppsSettings() const
 const CategoriesSettings& SettingsDialog::getCategoriesSettings() const
 {
     return categoriesSettings;
+}
+
+void SettingsDialog::accept()
+{
+    QDialog::accept();
+    categoriesTab->applyChanges();
+    applicationsTab->applyChanges();
 }
