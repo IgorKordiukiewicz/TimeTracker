@@ -55,7 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
     auto* timer = new QTimer{ this };
     timer->start(1000);
 
-    connect(timer, &QTimer::timeout, this, &MainWindow::updateTimeTracker);
+    connect(timer, &QTimer::timeout, &timeTracker, &TimeTracker::update);
+    connect(timer, &QTimer::timeout, dateRangeSelector, &DateRangeSelector::update);
     connect(dateRangeSelector, &DateRangeSelector::dateChanged, this, &MainWindow::onDateRangeChanged);
     connect(minimizeAction, &QAction::triggered, this, &QWidget::hide);
     connect(maximizeAction, &QAction::triggered, this, &QWidget::showMaximized);
@@ -90,11 +91,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
         hide();
         event->ignore();
     }
-}
-
-void MainWindow::updateTimeTracker()
-{
-    timeTracker.update();
 }
 
 void MainWindow::onDateRangeChanged(QDate beginDate, QDate endDate)

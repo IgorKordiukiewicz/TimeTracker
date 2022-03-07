@@ -29,7 +29,6 @@ protected:
     virtual void closeEvent(QCloseEvent* event) override;
 
 private slots:
-    void updateTimeTracker();
     void onDateRangeChanged(QDate beginDate, QDate endDate);
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
 

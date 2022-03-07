@@ -10,6 +10,7 @@ DateRangeSelector::DateRangeSelector(QWidget* parent)
     : QWidget(parent)
 {
     const QDate currentDate { QDate::currentDate() };
+    lastDate = currentDate;
 
     auto* beginDateLabel = new QLabel{ "From:" };
     beginDateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -58,6 +59,16 @@ DateRangeSelector::DateRangeSelector(QWidget* parent)
     connect(thisWeekPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onThisWeekPresetClicked);
     connect(thisMonthPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onThisMonthPresetClicked);
     connect(thisYearPresetButton, &QPushButton::clicked, this, &DateRangeSelector::onThisYearPresetClicked);
+}
+
+void DateRangeSelector::update()
+{
+    const QDate currentDate { QDate::currentDate() };
+    if (currentDate > lastDate) {
+        beginDateEdit->setMaximumDate(currentDate);
+        endDateEdit->setMaximumDate(currentDate);
+        lastDate = currentDate;
+    }
 }
 
 QDate DateRangeSelector::getBeginDate() const

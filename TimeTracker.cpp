@@ -12,6 +12,7 @@
 TimeTracker::TimeTracker()
 {
     currentAppStartTime = QDateTime::currentDateTime();
+    lastDate = QDate::currentDate();
 }
 
 TimeTracker::~TimeTracker()

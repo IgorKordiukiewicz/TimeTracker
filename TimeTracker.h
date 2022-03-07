@@ -17,7 +17,6 @@ public:
     TimeTracker();
     ~TimeTracker();
 
-    void update();
     void saveData();
     void loadData();
 
@@ -29,10 +28,14 @@ public:
 signals:
     void newAppTracked(const QString& appName);
 
+public slots:
+    void update();
+
 private:
     AppData appData;
     QDateTime currentAppStartTime;
     QString currentAppName;
+    QDate lastDate;
 
     enum class OS
     {

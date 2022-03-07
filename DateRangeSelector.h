@@ -19,6 +19,9 @@ public:
 signals:
     void dateChanged(QDate beginDate, QDate endDate);
 
+public slots:
+    void update();
+
 private slots:
     void onBeginDateChanged(QDate newDate);
     void onEndDateChanged(QDate newDate);
@@ -35,6 +38,8 @@ private:
     QDateEdit* beginDateEdit;
     QDateEdit* endDateEdit;
     bool dateChangedUsingPreset{false};
+
+    QDate lastDate;
 };
 
 #endif // DATERANGESELECTOR_H
