@@ -42,13 +42,6 @@ CategoriesTab::CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* pa
     connect(newCategoryButton, &QPushButton::clicked, this, &CategoriesTab::onNewCategoryButtonClicked);
 }
 
-void CategoriesTab::applyChanges()
-{
-    for(CategorySettingsEdit* categorySettingsEdit : categorySettingsEdits) {
-        categorySettingsEdit->applyChanges();
-    }
-}
-
 void CategoriesTab::onNewCategoryButtonClicked()
 {
     if(const QString categoryName{ newCategoryNameLineEdit->text() }; !categoryName.isEmpty() && !categoriesSettings.contains(categoryName)) {

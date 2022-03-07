@@ -16,8 +16,6 @@ class CategoriesTab : public QWidget
 public:
     CategoriesTab(CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
 
-    void applyChanges();
-
 signals:
     void categoryAdded(const QString& categoryName);
     void categoryRemoved(const QString& categoryName);

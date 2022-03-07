@@ -27,9 +27,8 @@ SettingsDialog::SettingsDialog(ApplicationsSettings appsSettings, CategoriesSett
     setLayout(mainLayout);
 
     setWindowTitle("Settings");
-    setFixedSize(450, 600);
 
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(categoriesTab, &CategoriesTab::categoryAdded, applicationsTab, &ApplicationsTab::onCategoryAdded);
     connect(categoriesTab, &CategoriesTab::categoryRemoved, applicationsTab, &ApplicationsTab::onCategoryRemoved);
@@ -47,7 +46,6 @@ const CategoriesSettings& SettingsDialog::getCategoriesSettings() const
 
 void SettingsDialog::accept()
 {
+    applicationsTab->ensureCorrectChanges();
     QDialog::accept();
-    categoriesTab->applyChanges();
-    applicationsTab->applyChanges();
 }

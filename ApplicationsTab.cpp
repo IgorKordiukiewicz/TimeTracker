@@ -36,10 +36,10 @@ ApplicationsTab::ApplicationsTab(ApplicationsSettings& appsSettings, const Categ
     setLayout(mainLayout);
 }
 
-void ApplicationsTab::applyChanges()
+void ApplicationsTab::ensureCorrectChanges()
 {
     for(ApplicationSettingsEdit* appSettingsEdit : appSettingsEdits) {
-        appSettingsEdit->applyChanges();
+        appSettingsEdit->ensureCorrectChanges();
     }
 }
 

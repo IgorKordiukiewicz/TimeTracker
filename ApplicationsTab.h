@@ -13,7 +13,7 @@ class ApplicationsTab : public QWidget
 public:
     ApplicationsTab(ApplicationsSettings& appsSettings, const CategoriesSettings& categoriesSettings, QWidget* parent = nullptr);
 
-    void applyChanges();
+    void ensureCorrectChanges();
 
 public slots:
     void onCategoryAdded(const QString& categoryName);

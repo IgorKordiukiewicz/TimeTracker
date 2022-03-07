@@ -14,8 +14,6 @@ class CategorySettingsEdit : public QWidget
 public:
     CategorySettingsEdit(const QString& categoryName, CategorySettings& categorySettings, QWidget* parent = nullptr);
 
-    void applyChanges();
-
 signals:
     void deleteCategory(CategorySettingsEdit* categorySettingsEdit, const QString& categoryName);
 
@@ -26,8 +24,6 @@ private slots:
 private:
     QString categoryName;
     CategorySettings& categorySettings;
-
-    QColor selectedColor;
 
     QLabel* categoryNameLabel;
     QPushButton* colorButton;

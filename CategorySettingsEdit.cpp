@@ -16,9 +16,8 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
     categoryNameLabel->setFixedWidth(250);
 
     colorButton = new QPushButton{ "Color" };
-    selectedColor = categorySettings.chartColor;
     QPixmap pixmap{ 16, 16 };
-    pixmap.fill(selectedColor);
+    pixmap.fill(categorySettings.chartColor);
     colorButton->setIcon(pixmap);
 
     auto* deleteButton = new QPushButton{ "" };
@@ -35,19 +34,14 @@ CategorySettingsEdit::CategorySettingsEdit(const QString& categoryName, Category
     connect(deleteButton, &QPushButton::clicked, this, &CategorySettingsEdit::onDeleteButtonClicked);
 }
 
-void CategorySettingsEdit::applyChanges()
-{
-    categorySettings.chartColor = selectedColor;
-}
-
 void CategorySettingsEdit::onColorButtonClicked()
 {
     QColorDialog colorDialog{ categorySettings.chartColor };
     if(colorDialog.exec()) {
-        selectedColor = colorDialog.selectedColor();
+        categorySettings.chartColor = colorDialog.selectedColor();
 
         QPixmap pixmap{ 16, 16 };
-        pixmap.fill(selectedColor);
+        pixmap.fill(colorDialog.selectedColor());
         colorButton->setIcon(pixmap);
     }
 }
