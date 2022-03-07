@@ -1,4 +1,4 @@
-## A time tracking application made using Qt6
+# Time tracking application made using Qt6
 
 Screenshots:
 ![TimeTracker_jchd8VXfDN](https://user-images.githubusercontent.com/25117425/157090660-cd5e016d-7c7f-40f3-8d97-bd9d96d74cfe.png)
