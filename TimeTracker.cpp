@@ -43,7 +43,7 @@ void TimeTracker::update()
     if (auto it{ appData.find(currentAppName) }; it != appData.end()) {
         it.value().push_back(DateTimeRange{ currentAppStartTime, currentDateTime });
     }
-    else if(appName != "Invalid") {
+    else if(currentAppName != "Invalid") {
         appData.insert(currentAppName, QVector<DateTimeRange>({ DateTimeRange{ currentAppStartTime, currentDateTime } }));
     }
 
